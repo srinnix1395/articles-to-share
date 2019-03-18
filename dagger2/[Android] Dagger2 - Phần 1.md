@@ -1,0 +1,3 @@
+[Android] Dagger2 - Bắt đầu Dependency injection thực sự với Dagger 2
+
+Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern nên việc chính là fix một vài cái issue phụ trong một ngày làm việc 4h ở đó. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các issue đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết các khái niệm về [Inversion of control](todo), về [Dependency injection](todo) và một library để implement DI trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm article, đọc thêm code example về 

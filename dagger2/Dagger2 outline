@@ -1,0 +1,27 @@
+- What is IoC? What is DI?
+Ans:
+- How to implement this by yourself without using dagger2.
+- FAQ about what's errors that users can encounter
+  + access visibility
+
+- Explain the meanings of each annotation:
+  + @Inject
+  + @Component
+  + @Module
+  + @Scope
+  + @Qualifier
+  + @Provide
+- What kind of injection: constructor injection, fields injection...
+- Global singleton and Local singleton
+- Singleton has implicit dependency
+- Singleton creation
+  + file Module
+  + file Component
+- How to add dagger2 to android project? Explain each lines in gradle.
+- Scope in dagger2
+- Dependency component vs sub-component
+
+
+
+- Note:
+  + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!

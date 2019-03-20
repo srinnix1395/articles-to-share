@@ -1,6 +1,20 @@
 [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
 
-Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern nên việc chính là fix một vài cái issue phụ trong một ngày làm việc 4h ở đó. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các issue đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết các khái niệm về [Inversion of control](todo), về [Dependency injection](todo) và một library để implement DI trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm article, đọc thêm code example về DI và Dagger. Tuy nhiên, do không thực sự cần và không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm, mình đơn giản chỉ copy code và thay giá trị tương ứng để chạy được ứng dụng - vài tháng sau đó trong đồ án của mình. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn viết dăm ba cái bài chém gió này, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.
+Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern nên việc chính là fix một vài cái issue phụ trong một ngày làm việc 4h ở đó. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các issue đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết các khái niệm về [Inversion of control](todo), về [Dependency injection](todo) và một library thường được sử dụng trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm article, đọc thêm code example về DI và Dagger. Tuy nhiên, do không thực sự cần và không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm, mình đơn giản chỉ copy code và thay giá trị tương ứng để chạy được ứng dụng - vài tháng sau đó trong đồ án của mình. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.
+
+### Các bài học để lên lớp
 
 1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
 2. [Android] Dagger 2 - Phần 2: Dependency component và sub-component
+3. ...
+
+### Kiến thức đầu vào
+
+* Không bị ở lại lớp vì môn *Lập trình hướng đối tượng*, *Lập trình Android cơ bản*
+* Đã đi học thêm về *Kotlin* (Vì các ví dụ mình sẽ sử dụng Kotlin)
+
+Ảnh trên unsplash
+
+### Dependency injection là gì?
+
+Trước hết, chúng ta cần hiểu dependency là gì? Ta có ví dụ như sau:

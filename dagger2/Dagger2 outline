@@ -1,5 +1,9 @@
 1. Part 1
 - What is IoC? What is DI?
+- Disadvantage of dependency:
+  + Hard dependencies reduce the reusability
+  + Hard dependencies make it hard for testing
+  + Hard dependencies hinders code maintainability when the project scales up
 - Explain the meanings of each annotation:
   + @Inject
   + @Component

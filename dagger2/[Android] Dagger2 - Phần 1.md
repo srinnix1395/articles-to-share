@@ -19,11 +19,11 @@ Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập �
 
 > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
 
-Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn vấn đề và background của vấn đề:
+Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn background của vấn đề:
 
 ##### Dependency
 
-Dependency là từ dùng để mô tả việc những module cấp cao gọi một module cấp thấp. Ta có ví dụ sau: khi chúng ta đi học một môn nào đấy, chúng ta cần có một quyển sách giáo khoa. Từ đó, ta có thể mô tả vấn đề trong thực tế đó thành các đối tượng: *Student* và *MathBook*.
+Dependency là từ dùng để mô tả việc module cấp cao gọi một module cấp thấp. Ta có ví dụ sau: khi chúng ta học một môn nào đấy, chúng ta cần có một quyển sách giáo khoa. Từ đó, ta có thể mô tả vấn đề trong thực tế đó thành các đối tượng: *Student* và *MathBook*.
 
 ```
 class MathBook {
@@ -58,16 +58,16 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, học sinh không thể học mà không có sách giáo khoa. Bởi vậy, ta nói *Student* phụ thuộc vào *MathBook* và *MathBook* được gọi là dependency của *Student*.
+Ở đây, học sinh không thể học mà không có sách giáo khoa. Bởi vậy, ta nói *Student* phụ thuộc vào *MathBook* và *MathBook* được gọi là dependency của *Student*. Vậy có điều gì cần lưu ý khi khai báo và khởi tạo các dependency? Xin giới thiệu: *Dependency inversion*!
 
 ##### Dependency Inversion
 
-Đây là nguyên lý cuối cùng trong những nguyên lý thiết kế trong lập trình hướng đối tượng **SOLID**. Nội dung của nguyên lý này như sau:
+Trong những nguyên lý thiết kế trong lập trình hướng đối tượng **SOLID**, *Dependency inversion* là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:
 
-* Các module (có thể hiểu ở phạm vi nhỏ hơn là class) cấp cao không nên phụ thuộc vào các module cấp thấp hơn mà nên phụ thuộc vào abstractions (một interface chẳng hạn)
+* Các module (có thể hiểu là class) cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả 2 nên phụ thuộc vào abstractions (một interface chẳng hạn)
 * Interface (abstraction) không nên phụ thuộc vào chi tiết, mà ngược lại. (Các class giao tiếp với nhau thông qua interface, không phải thông qua implementation.)
 
-Lần đầu tiên đọc nội dung này, mình thấy đúng là abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng (đọc lại nguyên lý để ngẫm tiếp) :D. Mình sẽ tiếp tục với ví dụ phía trên:
+Lần đầu tiên đọc nội dung này, mình thấy thật sự abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D. Mình sẽ tiếp tục với ví dụ phía trên:
 
 ```
 class Student {
@@ -82,14 +82,17 @@ class Student {
 }
 ```
 
-Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải khai báo thêm một thuộc tính là một quyển sách khác (*EnglishBook* chẳng hạn) và phải thêm một phương thức để học môn học đấy (`learnEnglish()`). Ngẫm một chút, nếu càng ngày *Student* càng học lên cao, số môn học cần phải học sẽ càng nhiều, *Student* sẽ càng ngày càng phình to ra~~ Ở đây, *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*(tức là đang phụ thuộc vào chi tiết, thay vì trừu tượng). Cách code này dẫn đến một vấn đề nữa là sửa đổi ở module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, việc maintain code trở nên phức tạp hơn. Để giải quyết vấn đề trên, chúng ta đến với khái niệm tiếp theo: *Inversion of control*
+Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải khai báo thêm một thuộc tính là một quyển sách khác (*EnglishBook* chẳng hạn) và phải thêm một phương thức để học môn học đấy (`learnEnglish()`). Ở đây sẽ xảy ra một số vấn đề:
+* Nếu càng ngày *Student* càng học lên cao, số môn học cần phải học sẽ càng nhiều, class *Student* sẽ càng ngày càng phình to ra~~
+* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*(tức là đang phụ thuộc vào chi tiết, thay vì trừu tượng). Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
+
+Để giải quyết vấn đề trên, chúng ta đến với khái niệm tiếp theo: *Inversion of control*
 
 ##### Inversion of control
 
 IoC là một design pattern để implement nguyên lý *Dependency inversion* ở trên. IoC tuân thủ các nội dung của *Dependency inversion* thông qua việc nó không quan tâm đến việc khởi tạo các module cấp thấp như thế nào, detail implementation của các module cấp thấp ra sao mà chỉ quan tâm đến những gì mà các module này cung cấp một cách abstraction (sử dụng interface).
 
-Ngoài ra, IoC sử dụng 1 container để chứa các detail implementation của các abstractions
-
+IoC sử dụng 1 container để chứa các detail implementation của các abstractions. Khi nào một module cấp cao cần dùng một module cấp thấp, module cấp cao cần tìm instance của module cấp thấp trong container và inject nó vào module cấp cao. todo: confirm
 
 Ví dụ ở phía trên nên được sửa lại theo IoC như sau:
 
@@ -146,11 +149,8 @@ fun main(args: Array<String>) {
 }
 ```
 
-Có nhiều cách để implement IoC như *Service Locator*, *Event* hay *Dependency injection*... Mỗi cách có ưu và nhược điểm riêng mà tùy trường hợp áp dụng sao cho phù hợp. Tuy nhiên, trong khuôn khổ bài viết này
+Có nhiều cách để implement IoC như *Service Locator*, *Event* hay *Dependency injection*... Mỗi cách có ưu và nhược điểm riêng mà tùy trường hợp áp dụng sao cho phù hợp. Tuy nhiên, trong khuôn khổ series này, chúng ta sẽ tìm hiểu về *Dependency injection* - một specific form của IoC.
+
 ##### Dependency injection
 
-Trong trường hợp này, nếu ta khởi tạo 2 thuộc tính `mathBook` và `englishBook` bên trong constructor của lớp *Student* như trong đoạn code ở trên, ta gọi kiểu này là hard dependency. Tuy nhiên, hard dependency có những hạn chế sau:
-
-* Làm giảm tính tái sử dụng vì nếu càng phụ thuộc nhiều, ta càng khó tái sử dụng lại một lớp nào đó.
-
-* Khó viết unit test hơn: Khi viết unit test, ta cần cô lập module cần test với phần còn lại của ứng dụng bằng cách mock các thành phần bên trong của đối tượng. Khi hard dependency xảy ra, ta không thể cô lập *MathBook* hoặc *EnglishBook* với *Student* để chạy được unit test.
+#####

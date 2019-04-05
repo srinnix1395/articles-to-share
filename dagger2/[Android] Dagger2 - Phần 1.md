@@ -6,7 +6,7 @@ Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập �
 
 1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
 2. [Android] Dagger 2 - Phần 2: Dependency component và sub-component
-3. ...
+3. [Android] Dagger 2 - Phần 3: Custom scope trong dagger 2
 
 ### Kiến thức đầu vào
 
@@ -153,4 +153,59 @@ Có nhiều cách để implement IoC như *Service Locator*, *Event* hay *Depen
 
 ##### Dependency injection
 
-#####
+Vậy *Dependency inject* là gì? DI là quá trình trong đó dependency của một module sẽ được cung cấp (inject) từ bên ngoài thay vì được khởi tạo bên trong của module. Ta có ví dụ sau về việc không sử dụng DI và có sử dụng DI:
+
+```
+class Student {
+
+    private var textBook: TextBook? = null
+
+    constructor() {
+        textBook = MathBook()
+    }
+
+    fun learn() {
+        textBook?.let {
+            println("Learning ${it.getSubjectName()}")
+        }
+    }
+}
+```
+
+Ta gọi trường hợp này là hard dependency khi `textBook` được khởi tạo cứng trong constructor chứ không phải được cung cấp từ bên ngoài. Với cách này, ta có những nhược điểm sau:
+
+* Tính tái sử dụng của module sẽ bị giảm đi: vì mỗi khi khởi tạo module cấp cao sẽ bắt buộc khởi tạo các module cấp thấp
+* Không thể unit test: khi viết unit test, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta hard dependency như trường hợp ở trên, ta không thể mock `textBook` để test được module `Student`.
+
+Ta sẽ sử dụng DI để giải quyết vấn đề hard dependency ở trên:
+
+```
+class Student {
+
+    private var textBook: TextBook? = null
+
+    constructor(textBook: TextBook?) {
+        this.textBook = textBook
+    }
+
+    fun learn() {
+        textBook?.let {
+            println("Learning ${it.getSubjectName()}")
+        }
+    }
+}
+```
+
+Và ở main:
+
+```
+fun main(args: Array<String>) {
+
+    val textBook = MathBook()
+    val student = Student(textBook)
+
+    student.learn()
+}
+```
+
+Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`.

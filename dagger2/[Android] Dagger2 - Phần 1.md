@@ -208,4 +208,23 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`.
+Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`. Tuy nhiên, đây chỉ là một ví dụ bé xíu, với 1 dependency được khởi tạo và inject vào, so với những vấn đề ở một project lớn hơn mà chúng ta sẽ gặp phải: khởi tạo và quản lý các dependency tùy theo scope của mỗi dependency. And Dagger 2 comes to the rescue!!!
+
+##### Dagger 2
+
+Dagger được Square tạo ra để implement DI trong Android. Tuy nhiên, một nhược điểm của Dagger 1 là Dagger 1 sử dụng reflection (reflection thì chậm) và việc tạo ra dependency được thực hiện lúc run-time nên có thể làm cho app bị crash. Khắc phục những nhược điểm từ Dagger 1, Dagger 2 không sử dụng reflection nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta. Những đoạn code được sinh ra khi compile sẽ không làm app crash bất thình lình nữa. Cùng với đó, các đoạn code này hoàn toàn không cao siêu mà rất dễ đọc bởi chúng bắt chước những đoạn code như của một lập trình viên thật sự viết ra nên việc debug là hoàn toàn có thể.
+
+##### Các annotation trong Dagger 2
+
+Dagger 2 dựa vào các thông tin có được từ các annotation để "viết" ra code khi compile. Bởi vậy, ta sẽ tìm hiểu các annotation cơ bản trong Dagger 2:
+
+* *@Inject* - đánh dấu "đâu" là nơi "cần một dependency".
+* *@Module* - đánh dấu một class, nơi "cung cấp các dependency"
+* *@Provides* - đánh dấu các method nằm bên trong *@Module* và thể hiện "cách khởi tạo các dependency".
+* *@Component* - đánh dấu một interface (dependency graph) là cầu nối giữa cung - *@Module* và cầu - *@Inject*.
+* *@Scope* - thể hiện vòng đời (scope) của các dependency, từ đó giúp ta tạo ra các global singleton hoặc local singleton.
+* *@Qualifier* - annotation này giúp phân biệt các dependency có cùng kiểu dữ liệu với nhau.
+
+Khá nhiều thứ phải nhớ đấy nhỉ~~. Nhưng mà đừng quá lo lắng, chúng ta sẽ thử implement ngay Dagger 2 để hiểu hơn từng annotation một nhớ.
+
+### Thực hành

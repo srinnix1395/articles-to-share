@@ -4,14 +4,19 @@
   + Hard dependencies reduce the reusability
   + Hard dependencies make it hard for testing
   + Hard dependencies hinders code maintainability when the project scales up
+- Dependency injection process with Dagger 2 is
+"A dependency consumer asks for the dependency(Object) from a dependency provider through a connector."
 - Explain the meanings of each annotation:
   + @Inject
   + @Component
-  + @Module
+  + @Module:
   + @Scope
   + @Qualifier
   + @Provide
-- What kind of injection: constructor injection, fields injection...
+- What kind of injection:
+  + Constructor injection
+  + Fields injection: must not be "private"
+  + Method injection
 - Scope in dagger2
 
 2. Part 2
@@ -28,6 +33,11 @@
   + access visibility
 - How to add dagger2 to android project? Explain each lines in gradle.
 
-
+#Reference
+- https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
+- https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-scopes-3dfd032ccd82
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 - Note:
   + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!
+  + Dagger 1 uses Java reflection to achieve DI, therefore it's slow and it used to perform dependency resolution at RUNTIME
+  + Dagger 2 uses Generating code to achieve DI, it used perform dependency resolution at COMPILE TIME

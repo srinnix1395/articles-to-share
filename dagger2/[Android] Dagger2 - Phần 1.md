@@ -208,11 +208,13 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`. Tuy nhiên, đây chỉ là một ví dụ bé xíu, với 1 dependency được khởi tạo và inject vào, so với những vấn đề ở một project lớn hơn mà chúng ta sẽ gặp phải: khởi tạo và quản lý các dependency tùy theo scope của mỗi dependency. And Dagger 2 comes to the rescue!!!
+Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`. Tuy nhiên, ta có thể so sánh đây chỉ là một ví dụ mà thầy giáo cho ta khi đi học - với 1 dependency được khởi tạo và inject vào, so với những vấn đề "vừa sức với giáo viên" trong bài thi sau này - một project lớn hơn mà chúng ta sẽ gặp phải: chẳng hạn là khởi tạo và quản lý các dependency tùy theo scope của mỗi dependency. Và chúng ta cần một công cụ mạnh hơn: **Dagger 2**
 
 ##### Dagger 2
 
-Dagger được Square tạo ra để implement DI trong Android. Tuy nhiên, một nhược điểm của Dagger 1 là Dagger 1 sử dụng reflection (reflection thì chậm) và việc tạo ra dependency được thực hiện lúc run-time nên có thể làm cho app bị crash. Khắc phục những nhược điểm từ Dagger 1, Dagger 2 không sử dụng reflection nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta. Những đoạn code được sinh ra khi compile sẽ không làm app crash bất thình lình nữa. Cùng với đó, các đoạn code này hoàn toàn không cao siêu mà rất dễ đọc bởi chúng bắt chước những đoạn code như của một lập trình viên thật sự viết ra nên việc debug là hoàn toàn có thể.
+Dagger là một library được Square tạo ra để implement DI trong Android. Hiện tại, Dagger có 2 phiên bản chính:
+* Dagger 1 là một *dynamic, run-time DI framework* được Square viết và đã deprecated. Dagger 1 khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time bằng cách sử dụng reflection. Bởi vậy, nó có nhược điểm là reflection thì chậm và app có thể bị crash khi chạy.
+* Dagger 2 là một *fully static, compile-time DI framework* được maintain bởi Google. Để khắc phục những nhược điểm của Dagger 1, Dagger 2 không sử dụng reflection để gen code lúc run-time nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, các đoạn code này hoàn toàn không cao siêu mà rất dễ đọc bởi chúng bắt chước những đoạn code như của một lập trình viên thật sự viết ra nên việc debug là hoàn toàn có thể.
 
 ##### Các annotation trong Dagger 2
 
@@ -225,15 +227,15 @@ Dagger 2 dựa vào các thông tin có được từ các annotation để "vi�
 * *@Scope* - thể hiện vòng đời (scope) của các dependency, từ đó giúp ta tạo ra các global singleton hoặc local singleton.
 * *@Qualifier* - annotation này giúp phân biệt các dependency có cùng kiểu dữ liệu với nhau.
 
-Khá nhiều thứ phải nhớ đấy nhỉ~~. Nhưng mà đừng quá lo lắng, chúng ta sẽ thử implement ngay Dagger 2 để hiểu hơn từng annotation một nhớ.
+Khá nhiều thứ phải nhớ đấy nhỉ~~. Nhưng mà đừng quá lo lắng, chúng ta sẽ thử implement ngay Dagger 2 để hiểu hơn ý nghĩa của từng annotation.
 
 ### Thực hành
 
 Với một project Android, ta sẽ cần nhiều dependency khác nhau với các vòng đời khác nhau:
-* "Global" singleton là những dependency tồn tại trong toàn bộ vòng đời của ứng dụng: *Context*, các utility class mà cần được sử dụng ở nhiều nơi trong ứng dụng.
+* "Global" singleton là những dependency tồn tại trong toàn bộ vòng đời của ứng dụng: *Context* hay các utility class mà cần được sử dụng ở nhiều nơi trong ứng dụng.
 * "Local" singleton là những dependency tồn tại trong các module nhỏ hơn: phụ thuộc vào vòng đời của activity/fragment hay tồn tại trong một phiên đăng nhập của user.
 
-Ở phần 1 này, chúng ta sẽ đến với phần khởi tạo và quản lý "global" singleton bằng Dagger 2. Từ đó, chúng ta sẽ hiểu hơn cách Dagger 2 "xây" ra được dependency graph.
+Ở phần 1 này, chúng ta sẽ đến với phần khởi tạo và quản lý "global" singleton bằng Dagger 2. Từ đó, chúng ta sẽ hiểu hơn cách Dagger 2 build ra được dependency graph.
 
 ##### Module
 
@@ -316,4 +318,4 @@ interface AppComponent {
 
 Tiếp theo, chúng ta khai báo `AppComponent` - cầu nối giữa *@Module* và *@Inject*, bằng cách sử dụng annotation *@Component*. Khi khai báo như trên, component này bao gồm 2 module là `ApplicationModule` và `ApiModule`. Điều này có nghĩa là ở class nào mà inject component này vào, class đó có thể yêu cầu được component này cung cấp các dependency mà được khai báo trong 2 module kia.
 
-Chúng ta đã hoàn thành 
+Chúng ta đã hoàn thành

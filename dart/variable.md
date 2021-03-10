@@ -1,0 +1,74 @@
+# Variable và built-in type.
+
+### Khai báo
+
+Để khai báo một biến, ta có thể sử dụng từ khóa `var` và *Dart* sẽ tự suy ra kiểu dữ liệu dựa vào giá trị được gán.
+```
+var name = "bob";     // name có kiểu dữ liệu String
+```
+
+Nếu bạn muốn chỉ định rõ kiểu dữ liệu cho biến, thay `var` bằng kiểu dữ liệu
+```
+String? name = null;  // name có kiểu dữ liệu String?
+```
+
+Ngoài ra, nếu bạn muốn khai báo một biến có kiểu dữ liệu không cố định (tức là có thể thay đổi được lúc run-time), hãy sử dụng `dynamic`. Tuy nhiên, `dynamic` [không được khuyên dùng](https://dart.dev/guides/language/effective-dart/design#avoid-using-dynamic-unless-you-want-to-disable-static-checking).
+```
+dynamic name = "a";
+name = 4;
+```
+
+### Giá trị mặc định
+
+Khi một biến được khởi tạo, nếu biến đó có kiểu dữ liệu nullable, giá trị mặc định của biến đó khi chưa được gán là `null` dù biến đó có kiểu dữ liệu số .
+```
+String? a;            // default value: null
+int? b;               // default value: null
+```
+
+Nếu biến đó có kiểu dữ liệu non-nullable, bạn phải gán cho nó khi khai báo. Nếu không, sẽ có compile-time error xảy ra.
+```
+int a;                // ERROR: chưa gán giá trị cho a mà đã sử dụng
+int b = 4;
+```
+
+Tuy nhiên, nếu biến đó là một local variable, ta không cần khởi tạo ngay lúc khai báo mà chỉ cần gán cho n một giá trị trước khi sử dụng lần đầu tiên.
+```
+int a;
+a = 3;
+print(a);
+```
+
+### Late variable
+
+Từ *Dart* version 2.12, từ khóa `late` được thêm vào nhằm xử lý 2 vấn đề:
+* Khai báo một biến non-nullable mà không cần gán cho ngay cho nó một giá trị cụ thể.
+* Khởi tạo chậm một biến: biến sẽ được khởi tạo khi biến được sử dụng lần đầu tiên.
+
+##### Khai báo mà không cần gán giá trị
+
+Thông thường, *control flow analysis* của *Dart* có thể xác định xem một biến non-nullable đã được gán giá trị trước khi sử dụng chưa và báo lỗi nếu biến đó chưa được gán giá trị. Tuy nhiên, bạn có thể thêm `late` khi khai báo biến đó báo cho compiler rằng:"Biến này sẽ được gán giá trị, nhưng không phải ngay bây giờ" và compiler sẽ không báo lỗi nữa.
+```
+late String description;
+
+void main() {
+  description = 'Feijoada!';
+  print(description);
+}
+```
+Note: Tuy nhiên, nếu việc gán giá trị cho biến không xảy ra, chương trình của bạn có thể bị crash khi chạy.
+
+##### Khởi tạo chậm
+
+Khi bạn khai báo một biến với từ khóa `late`, bạn có thể cung cấp cho n một *initializer*(một hàm dùng để khởi tạo) để đánh dấu rằng:"Biến này sẽ được gán giá trị thông qua *initializer* khi biến đó được sử dụng lần đầu tiên, nhưng không phải bây giờ".
+```
+late String temperature = _readThermometer();
+```
+
+Việc khởi tạo chậm này khá là tiện trong một số trường hợp:
+- Việc khởi tạo biến đó không thật sự cần thiết ở thời điểm khai báo và việc khởi tạo biến đó cũng là một việc không nhẹ nhàng gì. Trong trường hợp trên, nếu biến `temperature` không bao giờ được sử dụng, function không nhẹ nhàng `_readThermometer` cũng không cần phải chạy.
+- Bạn cần khởi tạo một biến thoonwong qua *initializer* nhưng *initializer* lại cần truy cập đến `this`
+
+### Final và const
+
+Nếu bạn không có ý định thay đổi giá trị một biến, hãy sử dụng `final` hoặc `const`. Một biến final chỉ được gán giá trị một lần duy nhất

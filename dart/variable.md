@@ -1,4 +1,4 @@
-# Variable và built-in type.
+# Variable
 
 ### Khai báo
 
@@ -67,8 +67,32 @@ late String temperature = _readThermometer();
 
 Việc khởi tạo chậm này khá là tiện trong một số trường hợp:
 - Việc khởi tạo biến đó không thật sự cần thiết ở thời điểm khai báo và việc khởi tạo biến đó cũng là một việc không nhẹ nhàng gì. Trong trường hợp trên, nếu biến `temperature` không bao giờ được sử dụng, function không nhẹ nhàng `_readThermometer` cũng không cần phải chạy.
-- Bạn cần khởi tạo một biến thoonwong qua *initializer* nhưng *initializer* lại cần truy cập đến `this`
+- Bạn cần khởi tạo một biến thông qua *initializer* nhưng *initializer* lại cần truy cập đến `this`
 
 ### Final và const
 
-Nếu bạn không có ý định thay đổi giá trị một biến, hãy sử dụng `final` hoặc `const`. Một biến final chỉ được gán giá trị một lần duy nhất
+Nếu bạn muốn khai báo một biến là hằng số, bạn có thể sự dụng từ khóa `final` hoặc `const`. Ý nghĩa của 2 từ khóa này là thông báo rằng:"Các biến này chỉ được gán giá trị một lần trong đời và không thể thay đổi được".
+
+##### final
+
+```
+final name = "Bob";               // Dart tự suy ra kiểu của biến là String
+final String nickName = "Bobby";
+
+name = "Alice";                   // ERROR: Không thể thay đổi giá trị của một biến final
+```
+
+Một biến `final` nếu nằm ở top-level hoặc nằm trong class sẽ được khởi tạo ở lần đầu tiên biến đó được sử dụng. Và chúng ta cần lưu ý rằng: một instance variable có thể là `final`, nhưng không thể là `const`.
+
+##### const
+
+Thực chất, một biến `const` cũng là một biến `final`. Nhưng biến `const` có thêm một điều kiện là biến đó phải là *compile-time constants*. Để thỏa mãn điều kiện đó:
+* Khi ta khai báo một biến `const`, ta phải gán ngay một giá trị cho nó thay vì có thể để trống và gán sau như `final`
+* Giá trị của một biến `const` có thể là một số , một `String`, một biến `const` khác hoặc một biểu thức số học của các biến `const` khác.
+```
+const foo = 1000;                 // Dart tự suy ra kiểu của foo là int
+const String bar = "A thousand"
+const double = baz = 3.14 * foo;
+```
+
+TODO: constant value

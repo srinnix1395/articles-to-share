@@ -95,4 +95,36 @@ const String bar = "A thousand"
 const double = baz = 3.14 * foo;
 ```
 
-TODO: constant value
+Từ khóa `const` ngoài việc dùng để tạo ra các *constant variables* còn có thể tạo ra các *constant values*. Tức là các giá trị không thể thay đổi được thay vì các biến không thể thay đổi được.
+```
+var foo = const [1, 2, 3];          // Biến foo không phải là constant variables nhưng giá trị được gán cho biến foo là constant values.
+final bar = const [1, 2, 3];        // Biến bar là final variables và giá trị được gán cho bar là constant values.
+const baz = [1, 2, 3];              // Biến baz là constant variables và giá trị được gán cho baz không phải constant values.
+```
+
+Ở đây, ta cần phân biệt giữa *constant variables* và *constant values*. Với một biến là *constant variables*, ta có 2 trường hợp, `const` variable và `final` variable
+```
+final bar = [1, 2, 3];
+const baz = [1, 2, 3];
+
+bar[0] = 4;                         // Ta có thể thay đổi được giá trị của values
+bar = [4, 5, 6];                    // ERROR: Ta không thể thay đổi được giá trị của biến bar vì bar là final variable
+baz[0] = 4;                         // ERROR: Ta không thể thay đổi được giá trị của values vì biến baz là constant variable
+baz = [4, 5, 6];                    // ERROR: Ta không thể thay đổi được giá trị của biến baz vì biến baz là constant variable
+```
+
+Với một biến có giá trị là *constant values*, ta có thể thay đổi giá trị của biến tùy thuộc vào biến đó có là *final variables* hay *constant variables* hay không
+```
+var foo = const [1, 2, 3];
+final bar = const [1, 2, 3];
+const baz = [1, 2, 3];  
+
+foo[0] = 4;                         // ERROR: Ta không thể thay đổi giá trị của values vì đó là một constant values
+foo = [4, 5, 6];                    // Ta có thể thay đổi được giá trị của foo vì foo chỉ là một biến bình thường
+bar = [4, 5, 6];                    // ERROR: Ta không thể thay đổi được giá trị của biến bar vì bar là final variable
+bar[0] = 4;                         // ERROR: Ta không thể thay đổi được giá trị của values của biến bar vì đó là một constant values
+baz[0] = 4;                         // ERROR: Ta không thể thay đổi được giá trị của values vì biến baz là constant variable
+baz = [4, 5, 6];                    // ERROR: Ta không thể thay đổi được giá trị của biến baz vì biến baz là constant variable           
+```
+
+**Note**: Một `final` object thì không thể thay đổi được, nhưng các trường bên trong (fields) thì có thể. Một `const` object thì không thể thay đổi được lẫn không thể thay đổi được các trường bên trong.

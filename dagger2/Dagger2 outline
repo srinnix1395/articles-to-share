@@ -40,6 +40,7 @@
 - https://m.facebook.com/groups/laptrinh.android/permalink/2302990506416007/
 - https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 - https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-scopes-3dfd032ccd82
+- https://guides.codepath.com/android/dependency-injection-with-dagger-2
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 - Note:
   + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!

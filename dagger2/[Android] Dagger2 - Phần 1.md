@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, học sinh không thể học mà không có sách giáo khoa. Bởi vậy, ta nói *Student* phụ thuộc vào *MathBook* và *MathBook* được gọi là dependency của *Student*. Vậy có điều gì cần lưu ý khi khai báo và khởi tạo các dependency? Xin giới thiệu: *Dependency inversion*!
+Ở đây, học sinh không thể học mà không có sách giáo khoa. Bởi vậy, ta nói *Student* phụ thuộc vào *MathBook* và *MathBook* được gọi là dependency của *Student*. Vậy có điều gì cần lưu ý khi khai báo và khởi tạo các dependency? Xin giới thiệu: *Inversion of control*!
 
 ### Dependency Inversion
 
@@ -85,7 +85,7 @@ Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải kh
 
 ### Inversion of control
 
-IoC là một design pattern để implement nguyên lý *Dependency inversion* ở trên. IoC tuân thủ các nội dung của *Dependency inversion* thông qua việc nó không quan tâm đến việc khởi tạo các module cấp thấp như thế nào, detail implementation của các module cấp thấp ra sao mà chỉ quan tâm đến những gì mà các module này cung cấp một cách abstraction (sử dụng interface).
+IoC là một design principle để implement nguyên lý *Dependency inversion* ở trên. IoC tuân thủ các nội dung của *Dependency inversion* thông qua việc nó không quan tâm đến việc khởi tạo các module cấp thấp như thế nào, detail implementation của các module cấp thấp ra sao mà chỉ quan tâm đến những gì mà các module này cung cấp một cách abstraction (sử dụng interface).
 
 IoC sử dụng 1 container để chứa các detail implementation của các abstractions. Khi nào một module cấp cao cần dùng một module cấp thấp, module cấp cao cần tìm instance của module cấp thấp trong container và inject nó vào module cấp cao. todo: confirm
 
@@ -223,10 +223,9 @@ Dagger là một library được Square tạo ra để implement DI trong Andro
 * Dagger 1 là một *dynamic, run-time DI framework* được Square viết và đã deprecated. Dagger 1 khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time bằng cách sử dụng reflection. Bởi vậy, nó có nhược điểm là reflection thì chậm và app có thể bị crash khi chạy.
 * Dagger 2 là một *fully static, compile-time DI framework* được maintain bởi Google. Để khắc phục những nhược điểm của Dagger 1, Dagger 2 không sử dụng reflection để gen code lúc run-time nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace.
 
-##### Annotation trong Dagger 2
+#### Annotation trong Dagger 2
 
-*Dagger 2* dựa vào các thông tin có được từ các annotation để "viết" code khi compile. Bởi vậy, ta sẽ tìm hiểu các annotation cơ bản trong Dagger 2:
-
+*Annotation* là một class chứa các metadata của các class, các method, các field hoặc thậm chí là các annotation khác. Từ đó, *Dagger 2* dựa vào các thông tin có được từ các annotation để "viết" code khi compile. Các annotation cơ bản trong *Dagger 2* là:
 * *@Component* - đánh dấu một interface (dependency graph) là cầu nối giữa cung - *@Module* và cầu - *@Inject*.
 * *@Inject* - đánh dấu "đâu" là nơi "cần một dependency".
 * *@Module* - đánh dấu một class, nơi "cung cấp các dependency"
@@ -236,6 +235,11 @@ Dagger là một library được Square tạo ra để implement DI trong Andro
 
 Trong đó, 3 annotation đầu tiên là 3 annotation quan trọng nhất mà chúng ta cần phải nhớ để implement Dagger 2. Các annotation còn lại sẽ không phải là vấn đề nếu ta hiểu rõ cách hoạt động của *Dagger 2* từ 3 annotation đầu tiên.
 
-##### Những kiểu inject với Dagger 2
+#### Những kiểu inject với Dagger 2
 
-Trước khi đi vào cách implement *Dagger 2*, ta sẽ tìm hiểu có những kiểu inject nào nói chung và những kiểu nào chúng ta sẽ hay sử dụng trong *Dagger 2*.
+Trước khi đi vào cách implement *Dagger 2*, chúng ta sẽ tìm hiểu có những cách nào để inject:
+* Constructor injection
+* Field injection
+* Method injection
+
+##### #Constructor injection

@@ -35,6 +35,7 @@
 - Handle scope in dagger 2
 
 #Reference
+- IOC, DIP, DI: https://www.tutorialsteacher.com/ioc/introduction
 - https://developer.android.com/training/dependency-injection/dagger-android
 - https://www.vogella.com/tutorials/Dagger/article.html
 - https://m.facebook.com/groups/laptrinh.android/permalink/2302990506416007/

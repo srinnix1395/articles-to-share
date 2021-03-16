@@ -1,25 +1,28 @@
 1. Part 1
-- What is IoC? What is DI?
-- Disadvantage of dependency:
+- What is Dependency?
+- What is IoC?
+- What is DI?
+- Disadvantage of hard dependency:
   + Hard dependencies reduce the reusability
   + Hard dependencies make it hard for testing
   + Hard dependencies hinders code maintainability when the project scales up
-- Dependency injection process with Dagger 2 is
-"A dependency consumer asks for the dependency(Object) from a dependency provider through a connector."
-- Explain the meanings of each annotation:
-  + @Inject
-  + @Component
-  + @Module:
-  + @Scope
-  + @Qualifier
-  + @Provide
+- Dagger 2
+  > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
+  + Compare with Dagger 1
+  + Explain the meanings of each annotation:
+    . @Component
+    . @Inject
+    . @Module:
+    . @Scope
+    . @Qualifier
+    . @Provide
 - What kind of injection:
   + Constructor injection
   + Fields injection: must not be "private"
   + Method injection
-- Scope in dagger2
 
 2. Part 2
+- The first program with @Inject & @Compoment
 - Global singleton and Local singleton
 - Singleton has implicit dependency
 - Singleton creation
@@ -28,12 +31,13 @@
 - Dependency component vs sub-component
 
 3. Part 3
-- How to implement this by yourself without using dagger2.
-- FAQ about what's errors that users can encounter
-  + access visibility
-- How to add dagger2 to android project? Explain each lines in gradle.
+- Scope in dagger2
+- Handle scope in dagger 2
 
 #Reference
+- https://developer.android.com/training/dependency-injection/dagger-android
+- https://www.vogella.com/tutorials/Dagger/article.html
+- https://m.facebook.com/groups/laptrinh.android/permalink/2302990506416007/
 - https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 - https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-scopes-3dfd032ccd82
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

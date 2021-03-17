@@ -1,6 +1,6 @@
 [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
 
-Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Dependency inversion*, *Inversion of control*, *Dependency injection* (DI) và một library thường được sử dụng để implement DI trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy code và thay giá trị tương ứng để chạy được ứng dụng - vài tháng sau đó trong đồ án của mình. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.
+Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement DI trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.
 
 Ảnh trên unsplash
 
@@ -21,8 +21,17 @@ Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn 
 
 ### Dependency
 
-Dependency là từ dùng để mô tả việc module cấp cao gọi một module cấp thấp. Ta có ví dụ sau: khi chúng ta học một môn nào đấy, chúng ta cần có một quyển sách giáo khoa. Từ đó, ta có thể mô tả vấn đề trong thực tế đó thành các đối tượng: *Student* và *MathBook*.
+*Dependency* là từ dùng để mô tả việc một module cấp cao phụ thuộc vào một module cấp thấp. VD: khi chúng ta học toán, chúng ta cần có một quyển sách toán. Ta có thể trừu tượng hóa vấn đề đó thành các đối tượng: *Student* và *MathBook*
 ```
+class Student {
+
+    var mathBook: MathBook = MathBook()
+
+    fun learn() {
+        println("Learning ${mathBook.getSubjectName()}")
+    }
+}
+
 class MathBook {
 
     fun getSubjectName(): String {
@@ -31,20 +40,7 @@ class MathBook {
 }
 ```
 
-```
-class Student {
-
-    var mathBook: MathBook? = null
-
-    fun learn() {
-        mathBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
-    }
-}
-```
-
-Và ở hàm `main`, ta sẽ gọi như sau:
+Và ở hàm `main()`, ta sẽ gọi như sau:
 ```
 fun main(args: Array<String>) {
     val student = Student()
@@ -54,42 +50,64 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, học sinh không thể học mà không có sách giáo khoa. Bởi vậy, ta nói *Student* phụ thuộc vào *MathBook* và *MathBook* được gọi là dependency của *Student*. Vậy có điều gì cần lưu ý khi khai báo và khởi tạo các dependency? Xin giới thiệu: *Inversion of control*!
+Ở đây, học sinh cần quyển sách toán để học và nếu không có sách toán, học sinh không thể hoàn thành việc học được. Bởi vậy, ta nói "*Student* phụ thuộc vào *MathBook*" hay "*MathBook* được gọi là dependency của *Student*".
 
-### Dependency Inversion
+Theo cách tiếp cận OOP, các class sẽ tương tác qua lại với nhau để có thể hoàn thành những chứng năng của app. Như trong ví dụ trên, *Student* tương tác (khởi tạo và quản lý vòng đời) với *MathBook*. Điều này sẽ dẫn chúng ta đến một khái niệm mới: *hard dependency*.
 
-Trong những nguyên lý thiết kế trong lập trình hướng đối tượng **SOLID**, *Dependency inversion* là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:
+*Hard dependency* là khái niệm để mô tả những trường hợp các dependency được khởi tạo trực tiếp thay vì được truyền vào từ bên ngoài vào. Tại sao *hard dependency* lại không tốt:
+* *Hard dependency* làm giảm tính tái sử dụng của các module
+* *Hard dependency* làm việc kiểm thử khó khăn hơn
+* *Hard dependency* làm cho việc maintain code khó hơn khi project được scale up.
 
-* Các module (có thể hiểu là class) cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả 2 nên phụ thuộc vào abstractions (một interface chẳng hạn)
-* Interface (abstraction) không nên phụ thuộc vào chi tiết, mà ngược lại. (Các class giao tiếp với nhau thông qua interface, không phải thông qua implementation.)
+##### #Tính tái sử dụng
 
-Lần đầu tiên đọc nội dung này, mình thấy thật sự abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D. Mình sẽ tiếp tục với ví dụ phía trên:
+Khi tồn tại nhiều *hard dependency*, mỗi khi khởi tạo module cấp cao sẽ bắt buộc khởi tạo các module cấp thấp. Các module sẽ bị ràng buộc với nhau hơn. Từ đó, tính tái sử dụng của các module sẽ bị giảm đi
+
+##### #Kiểm thử
+
+Khi thực hiện việc kiểm thử, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta *hard dependency* như trường hợp ở trên, ta không thể mock `textBook` để test được module `Student`.
+
+##### #Khả năng maintain code
+
+Cuối cùng, nếu các module không được tái sử dụng, nếu quá trình kiểm thử không được thực hiện đầy đủ mà project lại ngày càng phình to ra, việc maintain code đều sẽ gây khó khăn đối với cả các "ma cũ" lẫn "ma mới" của project.
+
+**Tóm lại vấn đề**: việc *hard dependency* sẽ làm cho các module *tight coupling* (dính chặt) vào nhau hơn, từ đó sẽ làm giảm tính tính tái sử dụng và tính mở rộng của module (Ngược lại với *tight coupling*, chúng ta có *loose coupling* và sẽ là mục tiêu mà chúng ta hướng đến khi sử dụng DI). Để giải quyết vấn đề này, chúng ta sẽ áp dụng nguyên lý *Inversion of Control* (IoC)
+
+### Inversion of control
+
+*IoC* là một design principle (không phải là design pattern), được sử dụng để đảo ngược các loại điều khiển khác nhau trong OOP design. Ở đây, việc điều khiển có thể là:
+* Điều khiển flow của một ứng dụng
+* Điều khiển flow của việc khởi tạo các dependency của một module.
+
+Và ý thứ hai+ viết hôm nay của chúng ta. Chúng ta tiếp tục với ví dụ ở phần trước: *MathBook* được khởi tạo trực tiếp bên trong *Student*. Từ đó ta có *hard dependency*. *IoC* gợi ý chúng ta giải quyết vấn đề này bằng cách đảo ngược việc điều khiển: thay vì tự khởi tạo, đơn giản ta chỉ cần giao việc khởi tạo này cho một class khác. Ví dụ ở trên có thể được sửa lại như sau:
 ```
 class Student {
 
-    var mathBook: MathBook? = null
+    var mathBook: MathBook = Factory.getMathBook()
 
     fun learn() {
-        mathBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
+        println("Learning ${mathBook.getSubjectName()}")
+    }
+}
+
+object Factory {
+
+    fun getMathBook(): MathBook {
+        return MathBook()
     }
 }
 ```
 
-Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải khai báo thêm một thuộc tính là một quyển sách khác (*EnglishBook* chẳng hạn) và phải thêm một phương thức để học môn học đấy (`learnEnglish()`). Ở đây sẽ xảy ra một số vấn đề:
-* Nếu càng ngày *Student* càng học lên cao, số môn học cần phải học sẽ càng nhiều, class *Student* sẽ càng ngày càng phình to ra~~
-* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*(tức là đang phụ thuộc vào chi tiết, thay vì trừu tượng). Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
+Thay vì quan tâm đến việc khởi tạo, ta lấy *MathBook* từ *Factory* và không quan tâm xem *MathBook* được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*
 
-Để giải quyết vấn đề trên, chúng ta đến với khái niệm tiếp theo: *Inversion of control*
 
-### Inversion of control
 
-IoC là một design principle để implement nguyên lý *Dependency inversion* ở trên. IoC tuân thủ các nội dung của *Dependency inversion* thông qua việc nó không quan tâm đến việc khởi tạo các module cấp thấp như thế nào, detail implementation của các module cấp thấp ra sao mà chỉ quan tâm đến những gì mà các module này cung cấp một cách abstraction (sử dụng interface).
 
-IoC sử dụng 1 container để chứa các detail implementation của các abstractions. Khi nào một module cấp cao cần dùng một module cấp thấp, module cấp cao cần tìm instance của module cấp thấp trong container và inject nó vào module cấp cao. todo: confirm
 
-Ví dụ ở phía trên nên được sửa lại theo IoC như sau:
+
+
+
+
 
 * Interface *TextBook* sẽ là cầu nối giữa module cấp cao (*Student*) và các module cấp thấp (*MathBook*, *EnglishBook*).
 ```
@@ -146,6 +164,53 @@ fun main(args: Array<String>) {
 
 Có nhiều cách để implement IoC như *Service Locator*, *Event* hay *Dependency injection*... Mỗi cách có ưu và nhược điểm riêng mà tùy trường hợp áp dụng sao cho phù hợp. Tuy nhiên, trong khuôn khổ series này, chúng ta sẽ tìm hiểu về *Dependency injection* - một specific form của IoC.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Dependency Inversion
+
+Trong những nguyên lý thiết kế trong lập trình hướng đối tượng **SOLID**, *Dependency inversion* là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:
+
+* Các module (có thể hiểu là class) cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả 2 nên phụ thuộc vào abstractions (một interface chẳng hạn)
+* Interface (abstraction) không nên phụ thuộc vào chi tiết, mà ngược lại. (Các class giao tiếp với nhau thông qua interface, không phải thông qua implementation.)
+
+Lần đầu tiên đọc nội dung này, mình thấy thật sự abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D. Mình sẽ tiếp tục với ví dụ phía trên:
+```
+class Student {
+
+    var mathBook: MathBook? = null
+
+    fun learn() {
+        mathBook?.let {
+            println("Learning ${it.getSubjectName()}")
+        }
+    }
+}
+```
+
+Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải khai báo thêm một thuộc tính là một quyển sách khác (*EnglishBook* chẳng hạn) và phải thêm một phương thức để học môn học đấy (`learnEnglish()`). Ở đây sẽ xảy ra một số vấn đề:
+* Nếu càng ngày *Student* càng học lên cao, số môn học cần phải học sẽ càng nhiều, class *Student* sẽ càng ngày càng phình to ra~~
+* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*(tức là đang phụ thuộc vào chi tiết, thay vì trừu tượng). Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
+
+Để giải quyết vấn đề trên, chúng ta đến với khái niệm tiếp theo: *Inversion of control*
+
+
 ### Dependency injection
 
 Vậy *Dependency inject* là gì? DI là quá trình trong đó dependency của một module sẽ được cung cấp (inject) từ bên ngoài thay vì được khởi tạo bên trong của module. Ta có ví dụ sau về việc không sử dụng DI và có sử dụng DI:
@@ -166,22 +231,7 @@ class Student {
 }
 ```
 
-Ta gọi trường hợp này là *hard dependency* khi `textBook` được khởi tạo cứng trong constructor chứ không phải được truyền vào từ bên ngoài. Những nhược điểm của *hard dependency* là:
-* *Hard dependency* làm giảm tính tái sử dụng của các module
-* *Hard dependency* làm việc kiểm thử khó khăn hơn
-* *Hard dependency* làm cho việc maintain code khó hơn khi project được scale up.
 
-##### #Tính tái sử dụng
-
-Khi tồn tại nhiều *hard dependency*, mỗi khi khởi tạo module cấp cao sẽ bắt buộc khởi tạo các module cấp thấp. Các module sẽ bị ràng buộc với nhau hơn. Từ đó, tính tái sử dụng của các module sẽ bị giảm đi
-
-##### #Kiểm thử
-
-Khi thực hiện việc kiểm thử, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta *hard dependency* như trường hợp ở trên, ta không thể mock `textBook` để test được module `Student`.
-
-##### #Khả năng maintain code
-
-Cuối cùng, nếu các module không được tái sử dụng, nếu quá trình kiểm thử không được thực hiện đầy đủ mà project lại ngày càng phình to ra, việc maintain code đều sẽ gây khó khăn đối với cả các "ma cũ"" lẫn "ma mới" của project.
 
 Bởi vậy, ta sẽ sử dụng DI để giải quyết vấn đề *hard dependency* ở trên như sau:
 ```

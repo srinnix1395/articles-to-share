@@ -25,10 +25,14 @@ Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn 
 ```
 class Student {
 
-    var mathBook: MathBook = MathBook()
+    private var book: MathBook
+
+    constructor() {
+        this.book = MathBook()
+    }
 
     fun learn() {
-        println("Learning ${mathBook.getSubjectName()}")
+        println("Learning ${book.getSubjectName()}")
     }
 }
 
@@ -44,8 +48,6 @@ Và ở hàm `main()`, ta sẽ gọi như sau:
 ```
 fun main(args: Array<String>) {
     val student = Student()
-    student.mathBook = MathBook()
-
     student.learn()
 }
 ```
@@ -65,7 +67,7 @@ Khi tồn tại nhiều *hard dependency*, mỗi khi khởi tạo module cấp c
 
 ##### #Kiểm thử
 
-Khi thực hiện việc kiểm thử, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta *hard dependency* như trường hợp ở trên, ta không thể mock `textBook` để test được module `Student`.
+Khi thực hiện việc kiểm thử, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta *hard dependency* như trường hợp ở trên, ta không thể mock `book` để test được module `Student`.
 
 ##### #Khả năng maintain code
 
@@ -73,7 +75,7 @@ Cuối cùng, nếu các module không được tái sử dụng, nếu quá tr�
 
 **Tóm lại vấn đề**: việc *hard dependency* sẽ làm cho các module *tight coupling* (dính chặt) vào nhau hơn, từ đó sẽ làm giảm tính tính tái sử dụng và tính mở rộng của module (Ngược lại với *tight coupling*, chúng ta có *loose coupling* và sẽ là mục tiêu mà chúng ta hướng đến khi sử dụng DI). Để giải quyết vấn đề này, chúng ta sẽ áp dụng nguyên lý *Inversion of Control* (IoC)
 
-### Inversion of control
+### Inversion of control - IoC
 
 *IoC* là một design principle (không phải là design pattern), được sử dụng để đảo ngược các loại điều khiển khác nhau trong OOP design. Ở đây, việc điều khiển có thể là:
 * Điều khiển flow của một ứng dụng
@@ -83,39 +85,53 @@ Và ý thứ hai+ viết hôm nay của chúng ta. Chúng ta tiếp tục với 
 ```
 class Student {
 
-    var mathBook: MathBook = Factory.getMathBook()
+    private var book: MathBook
+
+    constructor() {
+        this.book = BookFactory.getBook()
+    }
 
     fun learn() {
-        println("Learning ${mathBook.getSubjectName()}")
+        println("Learning ${book.getSubjectName()}")
     }
 }
 
-object Factory {
+object BookFactory {
 
-    fun getMathBook(): MathBook {
+    fun getBook(): MathBook {
         return MathBook()
     }
 }
 ```
 
-Thay vì quan tâm đến việc khởi tạo, ta lấy *MathBook* từ *Factory* và không quan tâm xem *MathBook* được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*
+Thay vì quan tâm đến việc khởi tạo, ta lấy *MathBook* từ *BookFactory* và không quan tâm xem *MathBook* được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*.
 
+![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/6k99fg3w4p_ioc-patterns.png)
 
+Tuy nhiên, khi project được scale up lên, chúng ta vẫn chưa hoàn toàn giải quyết được vấn đề để đạt được *loose coupling*. Một số vấn đề phát sinh là:
+* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*. Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
+* Nếu càng ngày *Student* càng học lên cao, môn học sẽ thay đổi theo thời gian và sách cũng cần thay đổi.
 
+Để giải quyết vấn đề này, ta cần đến một design principle khác: *Dependency inversion*
 
+### Dependency inversion - DIP
 
+Trong những nguyên lý thiết kế trong lập trình hướng đối tượng *SOLID*, *DIP* là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:
 
+* Các module cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả hai nên phụ thuộc vào trừ tượng
+* Trừu tượng không nên phụ thuộc vào chi tiết mà chi tiết nên phụ thuộc vào trừu tượng.
 
+Lần đầu tiên đọc nội dung này, mình thấy abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D.
 
-
-
-* Interface *TextBook* sẽ là cầu nối giữa module cấp cao (*Student*) và các module cấp thấp (*MathBook*, *EnglishBook*).
+Mình sẽ tiếp tục phân tích ví dụ phía trên: Ta thấy module cấp cao là *Student* đang phụ thuộc vào *MathBook* tức là phụ thuộc vào chi tiết thay vì trừu tượng. Để code tuân thủ đúng theo *DIP*, ta cần trừu tượng hóa module cấp thấp bằng cách tạo một interface:
 ```
 interface TextBook {
 
     fun getSubjectName(): String
 }
 ```
+
+Từ đó, bất kỳ quyển sách mới nào cũng cần implement *TextBook* và triển khai các function bên trong:
 ```
 class MathBook : TextBook {
 
@@ -124,144 +140,132 @@ class MathBook : TextBook {
     }
 }
 ```
-```
-class EnglishBook : TextBook {
 
-    override fun getSubjectName(): String {
-        return "English"
+Đối với *BookFactory*, ta cũng sẽ trả về một kiểu trừu tượng *TextBook* thay vì trả về một kiểu cụ thể:
+```
+object BookFactory {
+
+    fun getBook(): TextBook {
+        return MathBook()
     }
 }
 ```
 
-* Class *Student* thay vì bao gồm các thuộc tính cụ thể thì sẽ bao gồm một thuộc tính trừu tượng.
+Cuối cùng, ta sửa thuộc tính `book` của `Student` thành kiểu trừu tượng để nếu có học sang quyển sách khác, ta không cần phải sửa đổi `Student`:
 ```
 class Student {
 
-    var textBook: TextBook? = null
+    private var book: TextBook
+
+    constructor() {
+        this.book = BookFactory.getBook()
+    }
 
     fun learn() {
-        textBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
+        println("Learning ${book.getSubjectName()}")
     }
 }
 ```
 
-* Và bây giờ, *Student* có học bao nhiêu môn đi chăng nữa hoặc các môn học được "cải cách" thế nào đi chăng nữa, *Student* cũng sẽ không bị ảnh hưởng vì không còn quan tâm đến implementation detail của *MathBook* hay *EnglishBook* nữa. Học "lại" nào:
-```
-fun main(args: Array<String>) {
-    val student = Student()
+Sau khi sửa đổi, việc thiết kế đã tuân theo các rule của *DIP*:
+* Cả module cấp cao `Student` và module cấp thấp `MathBook` đều phụ thuộc vào trừu tượng (`TextBook`).
+* Chi tiết đang phụ thuộc vào trừu tượng: `Student` phụ thuộc vào `TextBook` thay vì `MathBook`.
 
-    val mathBook = MathBook()
-    student.textBook = mathBook
-    student.learn()
+Việc này giúp chúng ta lại tiến thêm một bước nữa trong việc đạt được *loose coupling*: Chúng ta có thể sửa đổi module cấp thấp mà không làm ảnh hưởng đến module cấp cao hoặc chúng ta có thể thay thế hẳn một module cấp thấp khác, miễn là nó tuân theo cái khung `TextBook`.
 
-    val englishBook = EnglishBook()
-    student.textBook = englishBook
-    student.learn()
-}
-```
+Như vậy, chúng ta đã tìm hiểu về khái niệm *IoC* và *Dependency inversion* nhằm mục đích đạt được *loose coupling*. Với ví dụ đã xét, chúng ta sử dụng design pattern *Factory* để đạt được *IoC*. Tuy nhiên, với *Factory*, module cấp cao vẫn có một chút liên quan đến việc khởi tạo module cấp thấp khi chúng ta get ra module cấp thấp từ *Factory* khi muốn khởi tạo. Để hoàn toàn tách rời việc khởi tạo module cấp thấp ra khỏi module cấp cao, chúng ta sẽ áp dụng một design pattern khác và là main của series này: *Dependency injection*.
 
-Có nhiều cách để implement IoC như *Service Locator*, *Event* hay *Dependency injection*... Mỗi cách có ưu và nhược điểm riêng mà tùy trường hợp áp dụng sao cho phù hợp. Tuy nhiên, trong khuôn khổ series này, chúng ta sẽ tìm hiểu về *Dependency injection* - một specific form của IoC.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Dependency Inversion
-
-Trong những nguyên lý thiết kế trong lập trình hướng đối tượng **SOLID**, *Dependency inversion* là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:
-
-* Các module (có thể hiểu là class) cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả 2 nên phụ thuộc vào abstractions (một interface chẳng hạn)
-* Interface (abstraction) không nên phụ thuộc vào chi tiết, mà ngược lại. (Các class giao tiếp với nhau thông qua interface, không phải thông qua implementation.)
-
-Lần đầu tiên đọc nội dung này, mình thấy thật sự abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D. Mình sẽ tiếp tục với ví dụ phía trên:
-```
-class Student {
-
-    var mathBook: MathBook? = null
-
-    fun learn() {
-        mathBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
-    }
-}
-```
-
-Ta thấy nếu *Student* muốn học thêm một môn mới, ta sẽ phải khai báo thêm một thuộc tính là một quyển sách khác (*EnglishBook* chẳng hạn) và phải thêm một phương thức để học môn học đấy (`learnEnglish()`). Ở đây sẽ xảy ra một số vấn đề:
-* Nếu càng ngày *Student* càng học lên cao, số môn học cần phải học sẽ càng nhiều, class *Student* sẽ càng ngày càng phình to ra~~
-* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*(tức là đang phụ thuộc vào chi tiết, thay vì trừu tượng). Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
-
-Để giải quyết vấn đề trên, chúng ta đến với khái niệm tiếp theo: *Inversion of control*
-
+Ảnh trên unsplash
 
 ### Dependency injection
 
-Vậy *Dependency inject* là gì? DI là quá trình trong đó dependency của một module sẽ được cung cấp (inject) từ bên ngoài thay vì được khởi tạo bên trong của module. Ta có ví dụ sau về việc không sử dụng DI và có sử dụng DI:
-```
-class Student {
+Vậy *Dependency injection* là gì? *DI* là một design pattern tuân theo *IoC*. Nó giúp chúng ta khởi tạo các dependency bên ngoài của module và cung cấp các dependency đó cho chúng ta thông qua nhiều cách. Với việc sử dụng *DI*, chúng ta đã loại bỏ hoàn toàn việc liên quan của một module đến việc khởi tạo các dependency của module đó.
 
-    private var textBook: TextBook? = null
+Chúng ta có thể mô tả *DI* bằng quan hệ của ba class:
+1. Client class: Module cấp cao và sẽ phụ thuộc vào service class.
+2. Service class: Module cấp thấp và là phụ thuộc của client class.
+3. Injector class: Người trung gian kết nối client class với service class bằng cách inject service class vào client class.
+
+Và mô hình sau sẽ giúp chúng ta mường tượng ra dễ hơn sự kết nối giữa ba class:
+
+![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p0yv1x6gay_DI.png)
+
+Như chúng ta thấy, *injector class* khởi tạo *service class* và inject nó vào *client class*. Theo cách này, *DI* làm cho *client class* sẽ hoàn toàn không liên quan đến việc khởi tạo *service class* như thế nào hay bao giờ nữa.
+
+#### Các kiểu inject
+
+*Injector class* có 3 cách để inject một *service class* vào *client class*. Đó là constructor injection, property injection và method injection.
+* Constructor injection: *injector class* inject *service class* thông qua constructor của *client class*
+* Property injection: *injector class* inject *service class* trực tiếp vào một public property của *client class*
+* Method injection: *client class* sẽ implement một interface chứa một method để cung cấp dependency và *injector class* sẽ sử dụng interface này để cung cấp *service class* cho *client class*.
+
+Chúng ta sẽ tiếp tục nâng cấp ví dụ ban đầu để làm ví dụ cho từng kiểu inject
+
+##### Constructor injection
+
+Chúng ta sẽ thêm một constructor cho `Student` để *injector class* có thể inject *TextBook* vào như sau:
+```
+class Student(book: TextBook) {
+
+    private var book: TextBook
 
     constructor() {
-        textBook = MathBook()
+        this.book = MathBook()
+    }
+
+    // TextBook sẽ được inject vào thông qua constructor này
+    constructor(book: TextBook) {
+       this.book = book
     }
 
     fun learn() {
-        textBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
+        println("Learning ${book.getSubjectName()}")
     }
 }
 ```
 
+##### Property injection
 
-
-Bởi vậy, ta sẽ sử dụng DI để giải quyết vấn đề *hard dependency* ở trên như sau:
+Đối với *property injection*, ta cần để access modifier của property muốn được inject thành *public* bởi cách inject này thực chất là *injector class* sẽ inject *service class* trực tiếp bằng cách gán giá trị.
 ```
-class Student {
+class Student(book: TextBook) {
 
-    private var textBook: TextBook? = null
-
-    constructor(textBook: TextBook?) {
-        this.textBook = textBook
-    }
+    lateinit var book: TextBook
 
     fun learn() {
-        textBook?.let {
-            println("Learning ${it.getSubjectName()}")
-        }
+        println("Learning ${book.getSubjectName()}")
     }
 }
 ```
 
-Và ở main:
+##### Method injection
 
+Để inject bằng *method injection*, *client class* cần implement một interface chứa method `setDependency()` để *injector class* truyền *service class* vào *client class*
 ```
-fun main(args: Array<String>) {
+interface TextBookDependency {
+  
+}
 
-    val textBook = MathBook()
-    val student = Student(textBook)
+class Student(book: TextBook) : {
 
-    student.learn()
+    lateinit var book: TextBook
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
 
 Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`. Tuy nhiên, ta có thể so sánh đây chỉ là một ví dụ mà thầy giáo cho ta khi đi học - với 1 dependency được khởi tạo và inject vào, so với những vấn đề "vừa sức với giáo viên" trong bài thi sau này - một project lớn hơn mà chúng ta sẽ gặp phải: chẳng hạn là khởi tạo và quản lý các dependency theo một scope mà chúng ta muốn. Và một công cụ mạnh hơn sẽ giúp chúng ta làm việc đó: **Dagger 2**
 

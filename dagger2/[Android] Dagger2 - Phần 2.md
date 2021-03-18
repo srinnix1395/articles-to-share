@@ -1,3 +1,23 @@
+### Dagger 2
+
+> Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
+
+Dagger là một library được Square tạo ra để implement DI trong Android. Hiện tại, Dagger có 2 version:
+* Dagger 1 là một *dynamic, run-time DI framework* được Square viết và đã deprecated. Dagger 1 khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time bằng cách sử dụng reflection. Bởi vậy, nó có nhược điểm là reflection thì chậm và app có thể bị crash khi chạy.
+* Dagger 2 là một *fully static, compile-time DI framework* được maintain bởi Google. Để khắc phục những nhược điểm của Dagger 1, Dagger 2 không sử dụng reflection để gen code lúc run-time nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace.
+
+#### Annotation trong Dagger 2
+
+*Annotation* là một class chứa các metadata của các class, các method, các field hoặc thậm chí là các annotation khác. Từ đó, *Dagger 2* dựa vào các thông tin có được từ các annotation để "viết" code khi compile. Các annotation cơ bản trong *Dagger 2* là:
+* *@Component* - đánh dấu một interface (dependency graph) là cầu nối giữa cung - *@Module* và cầu - *@Inject*.
+* *@Inject* - đánh dấu "đâu" là nơi "cần một dependency".
+* *@Module* - đánh dấu một class, nơi "cung cấp các dependency"
+* *@Provides* - đánh dấu các method nằm bên trong *@Module* và thể hiện "cách khởi tạo các dependency".
+* *@Scope* - thể hiện vòng đời (scope) của các dependency, từ đó giúp ta tạo ra các global singleton hoặc local singleton.
+* *@Qualifier* - annotation này giúp phân biệt các dependency có cùng kiểu dữ liệu với nhau.
+
+Trong đó, 3 annotation đầu tiên là 3 annotation quan trọng nhất mà chúng ta cần phải nhớ để implement Dagger 2. Các annotation còn lại sẽ không phải là vấn đề nếu ta hiểu rõ cách hoạt động của *Dagger 2* từ 3 annotation đầu tiên.
+
 # Thực hành
 
 Với một project Android, ta sẽ cần nhiều dependency khác nhau với các vòng đời khác nhau:

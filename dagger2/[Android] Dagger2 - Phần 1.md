@@ -1,13 +1,15 @@
 [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
 
-Mình biết đến Dagger(chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement DI trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.
+Mình biết đến *Dagger*(chính xác là *Dagger 2*) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement *DI* trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng *DI* có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về *DI* mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với *DI* trong Android.
 
-Ảnh trên unsplash
+![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg)
+
+Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
 # Các bài học để lên lớp
 
 1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản (Part 1 in your area)
-2. [[Android] Dagger 2 - Phần 2: Dependency component và sub-component]()
+2. [[Android] Dagger 2 - Phần 2: Part 2 - Into the Dagger 2]()
 3. [[Android] Dagger 2 - Phần 3: Custom scope trong dagger 2]()
 
 # Kiến thức đầu vào
@@ -21,7 +23,7 @@ Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn 
 
 ### Dependency
 
-*Dependency* là từ dùng để mô tả việc một module cấp cao phụ thuộc vào một module cấp thấp. VD: khi chúng ta học toán, chúng ta cần có một quyển sách toán. Ta có thể trừu tượng hóa vấn đề đó thành các đối tượng: *Student* và *MathBook*
+*Dependency* là từ dùng để mô tả việc một module cấp cao phụ thuộc vào một module cấp thấp. VD: khi chúng ta học toán, chúng ta cần có một quyển sách toán. Ta có thể trừu tượng hóa vấn đề đó thành các đối tượng: `Student` và `MathBook`
 ```
 class Student {
 
@@ -52,9 +54,9 @@ fun main(args: Array<String>) {
 }
 ```
 
-Ở đây, học sinh cần quyển sách toán để học và nếu không có sách toán, học sinh không thể hoàn thành việc học được. Bởi vậy, ta nói "*Student* phụ thuộc vào *MathBook*" hay "*MathBook* được gọi là dependency của *Student*".
+Ở đây, học sinh cần quyển sách toán để học và nếu không có sách toán, học sinh không thể hoàn thành việc học được. Bởi vậy, ta nói "`Student` phụ thuộc vào `MathBook`" hay "`MathBook` được gọi là dependency của `Student`".
 
-Theo cách tiếp cận OOP, các class sẽ tương tác qua lại với nhau để có thể hoàn thành những chứng năng của app. Như trong ví dụ trên, *Student* tương tác (khởi tạo và quản lý vòng đời) với *MathBook*. Điều này sẽ dẫn chúng ta đến một khái niệm mới: *hard dependency*.
+Theo cách tiếp cận OOP, các class sẽ tương tác qua lại với nhau để có thể hoàn thành những chứng năng của app. Như trong ví dụ trên, `Student` tương tác (khởi tạo và quản lý vòng đời) với `MathBook`. Điều này sẽ dẫn chúng ta đến một khái niệm mới: *hard dependency*.
 
 *Hard dependency* là khái niệm để mô tả những trường hợp các dependency được khởi tạo trực tiếp thay vì được truyền vào từ bên ngoài vào. Tại sao *hard dependency* lại không tốt:
 * *Hard dependency* làm giảm tính tái sử dụng của các module
@@ -81,7 +83,7 @@ Cuối cùng, nếu các module không được tái sử dụng, nếu quá tr�
 * Điều khiển flow của một ứng dụng
 * Điều khiển flow của việc khởi tạo các dependency của một module.
 
-Và ý thứ hai+ viết hôm nay của chúng ta. Chúng ta tiếp tục với ví dụ ở phần trước: *MathBook* được khởi tạo trực tiếp bên trong *Student*. Từ đó ta có *hard dependency*. *IoC* gợi ý chúng ta giải quyết vấn đề này bằng cách đảo ngược việc điều khiển: thay vì tự khởi tạo, đơn giản ta chỉ cần giao việc khởi tạo này cho một class khác. Ví dụ ở trên có thể được sửa lại như sau:
+Và ý thứ hai+ viết hôm nay của chúng ta. Chúng ta tiếp tục với ví dụ ở phần trước: `MathBook` được khởi tạo trực tiếp bên trong `Student`. Từ đó ta có *hard dependency*. *IoC* gợi ý chúng ta giải quyết vấn đề này bằng cách đảo ngược việc điều khiển: thay vì tự khởi tạo, đơn giản ta chỉ cần giao việc khởi tạo này cho một class khác. Ví dụ ở trên có thể được sửa lại như sau:
 ```
 class Student {
 
@@ -104,13 +106,13 @@ object BookFactory {
 }
 ```
 
-Thay vì quan tâm đến việc khởi tạo, ta lấy *MathBook* từ *BookFactory* và không quan tâm xem *MathBook* được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*.
+Thay vì quan tâm đến việc khởi tạo, ta lấy `MathBook` từ `BookFactory` và không quan tâm xem `MathBook` được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*.
 
 ![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/6k99fg3w4p_ioc-patterns.png)
 
 Tuy nhiên, khi project được scale up lên, chúng ta vẫn chưa hoàn toàn giải quyết được vấn đề để đạt được *loose coupling*. Một số vấn đề phát sinh là:
-* *Student* đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là *MathBook*. Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
-* Nếu càng ngày *Student* càng học lên cao, môn học sẽ thay đổi theo thời gian và sách cũng cần thay đổi.
+* `Student` đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là `MathBook`. Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
+* Nếu càng ngày `Student` càng học lên cao, môn học sẽ thay đổi theo thời gian và sách cũng cần thay đổi theo.
 
 Để giải quyết vấn đề này, ta cần đến một design principle khác: *Dependency inversion*
 
@@ -123,7 +125,7 @@ Trong những nguyên lý thiết kế trong lập trình hướng đối tượ
 
 Lần đầu tiên đọc nội dung này, mình thấy abstract vãi nồi~~ Có lẽ chúng ta nên "phụ thuộc" vào chi tiết trước (lấy ví dụ), rồi mới nên "phụ thuộc" vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D.
 
-Mình sẽ tiếp tục phân tích ví dụ phía trên: Ta thấy module cấp cao là *Student* đang phụ thuộc vào *MathBook* tức là phụ thuộc vào chi tiết thay vì trừu tượng. Để code tuân thủ đúng theo *DIP*, ta cần trừu tượng hóa module cấp thấp bằng cách tạo một interface:
+Mình sẽ tiếp tục phân tích ví dụ phía trên: Ta thấy module cấp cao là `Student` đang phụ thuộc vào `MathBook` tức là phụ thuộc vào chi tiết thay vì trừu tượng. Để code tuân thủ đúng theo *DIP*, ta cần trừu tượng hóa module cấp thấp bằng cách tạo một interface:
 ```
 interface TextBook {
 
@@ -131,7 +133,7 @@ interface TextBook {
 }
 ```
 
-Từ đó, bất kỳ quyển sách mới nào cũng cần implement *TextBook* và triển khai các function bên trong:
+Từ đó, bất kỳ quyển sách mới nào cũng cần implement `TextBook` và triển khai các function bên trong:
 ```
 class MathBook : TextBook {
 
@@ -141,7 +143,7 @@ class MathBook : TextBook {
 }
 ```
 
-Đối với *BookFactory*, ta cũng sẽ trả về một kiểu trừu tượng *TextBook* thay vì trả về một kiểu cụ thể:
+Đối với `BookFactory`, ta cũng sẽ trả về một kiểu trừu tượng `TextBook` thay vì trả về một kiểu cụ thể:
 ```
 object BookFactory {
 
@@ -175,7 +177,9 @@ Việc này giúp chúng ta lại tiến thêm một bước nữa trong việc 
 
 Như vậy, chúng ta đã tìm hiểu về khái niệm *IoC* và *Dependency inversion* nhằm mục đích đạt được *loose coupling*. Với ví dụ đã xét, chúng ta sử dụng design pattern *Factory* để đạt được *IoC*. Tuy nhiên, với *Factory*, module cấp cao vẫn có một chút liên quan đến việc khởi tạo module cấp thấp khi chúng ta get ra module cấp thấp từ *Factory* khi muốn khởi tạo. Để hoàn toàn tách rời việc khởi tạo module cấp thấp ra khỏi module cấp cao, chúng ta sẽ áp dụng một design pattern khác và là main của series này: *Dependency injection*.
 
-Ảnh trên unsplash
+![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/45dk2f9666_diana-polekhina-meEnpiwpzTA-unsplash.jpg)
+
+Photo by <a href="https://unsplash.com/@diana_pole?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Diana Polekhina</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
 ### Dependency injection
 
@@ -203,9 +207,9 @@ Chúng ta sẽ tiếp tục nâng cấp ví dụ ban đầu để làm ví dụ 
 
 ##### Constructor injection
 
-Chúng ta sẽ thêm một constructor cho `Student` để *injector class* có thể inject *TextBook* vào như sau:
+Chúng ta sẽ thêm một constructor cho `Student` để *injector class* có thể inject `TextBook` vào như sau:
 ```
-class Student(book: TextBook) {
+class Student {
 
     private var book: TextBook
 
@@ -228,7 +232,7 @@ class Student(book: TextBook) {
 
 Đối với *property injection*, ta cần để access modifier của property muốn được inject thành *public* bởi cách inject này thực chất là *injector class* sẽ inject *service class* trực tiếp bằng cách gán giá trị.
 ```
-class Student(book: TextBook) {
+class Student {
 
     lateinit var book: TextBook
 
@@ -240,60 +244,26 @@ class Student(book: TextBook) {
 
 ##### Method injection
 
-Để inject bằng *method injection*, *client class* cần implement một interface chứa method `setDependency()` để *injector class* truyền *service class* vào *client class*
+Để inject bằng *method injection*, *client class* cần implement một interface chứa method setter để *injector class* truyền *service class* vào *client class*
 ```
 interface TextBookDependency {
-  
+    fun setDependency(book: TextBook)
 }
 
-class Student(book: TextBook) : {
+class Student : TextBookDependency {
 
     lateinit var book: TextBook
 
     fun learn() {
         println("Learning ${book.getSubjectName()}")
     }
+
+    override fun setDependency(book: TextBook) {
+        this.book = book
+    }
 }
 ```
 
+Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã bắt đầu vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi mãi tuổi 18.
 
-
-
-
-
-
-
-
-
-
-
-Ở đây, chúng ta đã sử dụng DI một cách manual bằng cách khởi tạo `textBook` ở bên ngoài và inject nó vào module sử dụng là `student`. Tuy nhiên, ta có thể so sánh đây chỉ là một ví dụ mà thầy giáo cho ta khi đi học - với 1 dependency được khởi tạo và inject vào, so với những vấn đề "vừa sức với giáo viên" trong bài thi sau này - một project lớn hơn mà chúng ta sẽ gặp phải: chẳng hạn là khởi tạo và quản lý các dependency theo một scope mà chúng ta muốn. Và một công cụ mạnh hơn sẽ giúp chúng ta làm việc đó: **Dagger 2**
-
-### Dagger 2
-
-> Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
-
-Dagger là một library được Square tạo ra để implement DI trong Android. Hiện tại, Dagger có 2 version:
-* Dagger 1 là một *dynamic, run-time DI framework* được Square viết và đã deprecated. Dagger 1 khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time bằng cách sử dụng reflection. Bởi vậy, nó có nhược điểm là reflection thì chậm và app có thể bị crash khi chạy.
-* Dagger 2 là một *fully static, compile-time DI framework* được maintain bởi Google. Để khắc phục những nhược điểm của Dagger 1, Dagger 2 không sử dụng reflection để gen code lúc run-time nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace.
-
-#### Annotation trong Dagger 2
-
-*Annotation* là một class chứa các metadata của các class, các method, các field hoặc thậm chí là các annotation khác. Từ đó, *Dagger 2* dựa vào các thông tin có được từ các annotation để "viết" code khi compile. Các annotation cơ bản trong *Dagger 2* là:
-* *@Component* - đánh dấu một interface (dependency graph) là cầu nối giữa cung - *@Module* và cầu - *@Inject*.
-* *@Inject* - đánh dấu "đâu" là nơi "cần một dependency".
-* *@Module* - đánh dấu một class, nơi "cung cấp các dependency"
-* *@Provides* - đánh dấu các method nằm bên trong *@Module* và thể hiện "cách khởi tạo các dependency".
-* *@Scope* - thể hiện vòng đời (scope) của các dependency, từ đó giúp ta tạo ra các global singleton hoặc local singleton.
-* *@Qualifier* - annotation này giúp phân biệt các dependency có cùng kiểu dữ liệu với nhau.
-
-Trong đó, 3 annotation đầu tiên là 3 annotation quan trọng nhất mà chúng ta cần phải nhớ để implement Dagger 2. Các annotation còn lại sẽ không phải là vấn đề nếu ta hiểu rõ cách hoạt động của *Dagger 2* từ 3 annotation đầu tiên.
-
-#### Những kiểu inject với Dagger 2
-
-Trước khi đi vào cách implement *Dagger 2*, chúng ta sẽ tìm hiểu có những cách nào để inject:
-* Constructor injection
-* Field injection
-* Method injection
-
-##### #Constructor injection
+Cuối cùng, mình hy vọng các bạn sẽ phân biệt được các khái niệm nghe có vẻ na ná nhau này, sau đó là nắm rõ, trước khi đi vào tìm hiểu một công cụ không mới nhưng không phải ai cũng chắc tay khi sử dụng; một công cụ nhằm giải quyết những nhàm chán lặp lại khi viết code nếu chúng ta tự implement các khái niệm đã được đề cập ở phần I này. Đó là **Dagger 2**.

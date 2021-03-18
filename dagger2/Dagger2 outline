@@ -1,4 +1,4 @@
-1. Part 1
+1. Part 1 - Các khái niệm cơ bản
 - What is Dependency?
 - Disadvantage of hard dependency:
   + Hard dependencies reduce the reusability
@@ -7,6 +7,12 @@
 - What is IoC?
 - What is DIP?
 - What is DI?
+- What kind of injection:
+  + Constructor injection
+  + Fields injection: must not be "private"
+  + Method injection
+
+2. Part 2 - Into the Dagger 2
 - Dagger 2
   > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
   + Compare with Dagger 1
@@ -17,12 +23,6 @@
     . @Scope
     . @Qualifier
     . @Provide
-- What kind of injection:
-  + Constructor injection
-  + Fields injection: must not be "private"
-  + Method injection
-
-2. Part 2
 - The first program with @Inject & @Compoment
 - Global singleton and Local singleton
 - Singleton has implicit dependency

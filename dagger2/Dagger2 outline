@@ -13,9 +13,9 @@
   + Method injection
 
 2. Part 2 - Into the Dagger 2
+- Dagger introduction, compare Dagger 1 and Dagger 2
 - Dagger 2
   > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
-  + Compare with Dagger 1
   + Explain the meanings of each annotation:
     . @Component
     . @Inject
@@ -24,6 +24,7 @@
     . @Qualifier
     . @Provide
 - The first program with @Inject & @Compoment
+- @Module, @Provide, @Qualifier
 - Global singleton and Local singleton
 - Singleton has implicit dependency
 - Singleton creation
@@ -32,6 +33,7 @@
 - Dependency component vs sub-component
 
 3. Part 3
+- @Scope
 - Scope in dagger2
 - Handle scope in dagger 2
 

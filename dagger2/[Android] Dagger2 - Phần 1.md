@@ -2,9 +2,10 @@
 
 Mình biết đến *Dagger*(chính xác là *Dagger 2*) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement *DI* trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng *DI* có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về *DI* mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với *DI* trong Android.
 
-![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg)
-
-Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg">
+  Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+</p>
 
 # Các bài học để lên lớp
 
@@ -108,7 +109,10 @@ object BookFactory {
 
 Thay vì quan tâm đến việc khởi tạo, ta lấy `MathBook` từ `BookFactory` và không quan tâm xem `MathBook` được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern *Factory*, một trong những design pattern impelement *IoC*.
 
-![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/6k99fg3w4p_ioc-patterns.png)
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/6k99fg3w4p_ioc-patterns.png">
+  Các design pattern implement <i>Inversion of control</i>. Nguồn: <a href="https://www.tutorialsteacher.com/ioc/inversion-of-control">Inversion of Control</a>
+</p>
 
 Tuy nhiên, khi project được scale up lên, chúng ta vẫn chưa hoàn toàn giải quyết được vấn đề để đạt được *loose coupling*. Một số vấn đề phát sinh là:
 * `Student` đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là `MathBook`. Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.
@@ -177,9 +181,10 @@ Việc này giúp chúng ta lại tiến thêm một bước nữa trong việc 
 
 Như vậy, chúng ta đã tìm hiểu về khái niệm *IoC* và *Dependency inversion* nhằm mục đích đạt được *loose coupling*. Với ví dụ đã xét, chúng ta sử dụng design pattern *Factory* để đạt được *IoC*. Tuy nhiên, với *Factory*, module cấp cao vẫn có một chút liên quan đến việc khởi tạo module cấp thấp khi chúng ta get ra module cấp thấp từ *Factory* khi muốn khởi tạo. Để hoàn toàn tách rời việc khởi tạo module cấp thấp ra khỏi module cấp cao, chúng ta sẽ áp dụng một design pattern khác và là main của series này: *Dependency injection*.
 
-![alt text](https://s3-ap-southeast-1.amazonaws.com/kipalog.com/45dk2f9666_diana-polekhina-meEnpiwpzTA-unsplash.jpg)
-
-Photo by <a href="https://unsplash.com/@diana_pole?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Diana Polekhina</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/45dk2f9666_diana-polekhina-meEnpiwpzTA-unsplash.jpg">
+  Photo by <a href="https://unsplash.com/@diana_pole?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Diana Polekhina</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+</p>
 
 ### Dependency injection
 

@@ -85,7 +85,7 @@ void main() {
 
 ### Finally
 
-Tương tự với *Java*, ta có `finally` để dùng trong những trường hợp ta muốn chạy những đoạn code dọn dẹp kể cả trong trường hợp exception được catch
+Tương tự với *Java*, ta có `finally` để dùng trong những trường hợp ta muốn chạy những đoạn code dọn dẹp kể cả trong trường hợp chúng ta không catch exception nào.
 ```
 try {
   breedMoreLlamas();

@@ -24,7 +24,7 @@ if (isRaining()) {
 
 ### Vòng lặp `for`
 
-*Closure* bên trong vòng lặp `for` sẽ capture được giá trị
+*Closure* bên trong vòng lặp `for` sẽ capture được giá trị của các phần tử.
 ```
 var callbacks = [];
 for (var i = 0; i < 2; i++) {
@@ -55,7 +55,7 @@ Tương tự như *Java*
 
 ### Switch và case
 
-Câu lệnh `switch` trong *Dart* chấp nhận dữ liệu kiểu `int`, `String` hoặc một *compile-time constant* và sử dụng toáng tử `==` để so sánh. Mọi mệnh đề `case` mà không trống bắt buộc phải kết thúc bằng: `break`, `continue`, `throw` hay `return`, nếu không sẽ có lỗi
+Câu lệnh `switch` trong *Dart* chấp nhận dữ liệu kiểu `int`, `String` hoặc một *compile-time constant* và sử dụng toáng tử `==` để so sánh. Mọi mệnh đề `case` mà không rỗng bắt buộc phải kết thúc bằng một trong các statement: `break`, `continue`, `throw` hay `return`, nếu không compiler sẽ báo lỗi
 ```
 var command = 'OPEN';
 switch (command) {
@@ -69,7 +69,7 @@ switch (command) {
 }
 ```
 
-Tuy nhiên, với mệnh đều `case` mà rỗng, thì case tiếp theo sẽ được thực hiện
+Tuy nhiên, với mệnh đề `case` rỗng, thì case tiếp theo sẽ được thực hiện
 ```
 var command = 'CLOSED';
 switch (command) {
@@ -81,7 +81,7 @@ switch (command) {
 }
 ```
 
-Ngoài ra, khi sử dụng `continue`, case tiếp theo sẽ được thực hiện
+Ngoài ra, nếu bạn có ý muốn case tiếp theo được thực hiện, hãy sử dụng `continue`
 ```
 var command = 'CLOSED';
 switch (command) {

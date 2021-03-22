@@ -20,7 +20,7 @@ name = 4;
 
 ### Giá trị mặc định
 
-Khi một biến được khởi tạo, nếu biến đó có kiểu dữ liệu nullable, giá trị mặc định của biến đó khi chưa được gán là `null` dù biến đó có kiểu dữ liệu số .
+Khi một biến được khởi tạo, nếu biến đó có kiểu dữ liệu nullable, giá trị mặc định của biến đó khi chưa được gán là `null` dù biến đó có kiểu nào đi chăng nữa.
 ```
 String? a;            // default value: null
 int? b;               // default value: null
@@ -87,7 +87,7 @@ Một biến `final` nếu nằm ở top-level hoặc nằm trong class sẽ đ�
 ##### const
 
 Thực chất, một biến `const` cũng là một biến `final`. Nhưng biến `const` có thêm một điều kiện là biến đó phải là *compile-time constants*. Để thỏa mãn điều kiện đó:
-* Khi ta khai báo một biến `const`, ta phải gán ngay một giá trị cho nó thay vì có thể để trống và gán sau như `final`
+* Khi ta khai báo một biến `const`, ta phải gán ngay một giá trị cho nó thay vì có thể để trống và gán giá trị sau như `final`
 * Giá trị của một biến `const` có thể là một số , một `String`, một biến `const` khác hoặc một biểu thức số học của các biến `const` khác.
 ```
 const foo = 1000;                 // Dart tự suy ra kiểu của foo là int

@@ -10,5 +10,11 @@ abstract class AbstractContainer {
   // Define constructors, fields, methods...
 
   void updateChildren(); // Abstract method.
+
+  void setChildren() {
+    //do something
+  }
 }
 ```
+
+Tương tự như *Java*, *abstract class* bao gồm cả *abstract method* và những method đã được implement.

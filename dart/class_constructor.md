@@ -1,25 +1,4 @@
-# Class
-
-*Dart* là một ngôn ngữ hướng đối tượng và hỗ trợ kế thừa thông qua cơ chế mixin. Mọi object đều là một instance của một class và tất cả class (ngoại trừ `Null`) đều là lớp con của `Object`. *Dart* chỉ hỗ trợ đơn kế thừa, tức là mọi class (trừ `Object?`) đều chỉ một lớp cha duy nhát. Tuy nhiên, cơ chế mixin cho phép một class có thể tái sử dụng todo của nhiều class khác. Ngoài ra, *extension method* cũng là một cách để thêm các chức năng vào một class mà không cần sửa đổi class hoặc tạo các lớp con.
-
-### Truy cập class members
-
-Các member của một object bao gồm các *instance variable* và các *method*. Để truy cập đến các member này, ta sử dụng `.`
-```
-var p = Point(2, 2);
-
-// Get the value of y.
-assert(p.y == 2);
-
-// Invoke distanceTo() on p.
-double distance = p.distanceTo(Point(4, 4));
-```
-
-Và sử dụng `?.` đối với trường hợp đối tượng truy cập có kiểu dữ liệu nullable.
-```
-// If p is non-null, set a variable equal to its y value.
-var a = p?.y;
-```
+# Class's constructor
 
 ### Sử dụng constructor
 
@@ -66,33 +45,14 @@ const pointAndLine = {
 };
 ```
 
-### Gettting an object's type
-
-Để get kiểu của object lúc run-time, chúng ta có thể sử dụng property `runtimeType` có sẵn của `Object` và trả về object kiểu `Type`.
+Khi sử dụng *constant constructor*, chúng ta vẫn phải thêm `const` trước constructor hoặc constructor đó phải ở trong một *constant context* thì object được tạo ra mới là một *compile-time constant*
 ```
-print('The type of a is ${a.runtimeType}');
-```
-
-Vậy là với 3 phần đầu tiên của bài này, chúng ta đã biết cách sừ dụng class: cách truy cập đến các member, cách khởi tạo và cách lấy kiểu của một object. Các phần tiếp theo sẽ nói về cách implement một class.
-
-### Instance variable
-
-Ta có thể khai báo các *instance variable* theo cú pháp sau:
-```
-class Point {
-  double? x; // Declare instance variable x, initially null.
-  double? y; // Declare y, initially null.
-  double z = 0; // Declare z, initially 0.
-}
+var a = const ImmutablePoint(1, 1);        // compile-time constant
+var b = ImmutablePoint(1, 1);              // not a compile-time constant
+const c = ImmutablePoint(1, 1);            // compile-time constant
 ```
 
-Giá trị mặc định của các biến nullable chưa được khởi tạo là `null`.
-
-Tất cả các *instace-variable* đều có một *getter* method được tự động gen. Các *non-final instance variable* và `late final` *instance variable* (mà không có function khởi tạo `initializer()`) thì được gen tự động các *setter* method (Chi tiết ta sẽ nói đến ở phần sau)
-
-Đối với một `final` instance variable, chúng ta có thể khởi tạo trực tiếp khi khai báo variable đó hoặc khởi tạo ở constructor. Nếu bạn không muốn khởi tạo tại một trong 2 vị trí đó, hãy sử dụng `late` để khởi tạo sau. Tuy nhiên, [hãy cẩn thân với điều này](https://dart.dev/guides/language/effective-dart/design#avoid-public-late-final-fields-without-initializers)
-
-### Constructor
+### Khai báo constructor
 
 *Constructor* của một class là một function có tên giống như class đó và không có kiểu dữ liệu trả về
 ```
@@ -150,12 +110,12 @@ class Point {
 
 ##### Gọi non-default superclass constructor
 
-Mặc định, constructor của lớp con sẽ gọi constructor không tên, không tham số của lớp cha trước khi chạy đoạn code trong constructor's body của nó. Nếu có *initializer list* (chúng ta sẽ nói tới ở phía sau), nó sẽ được chạy trước constructor của lớp cha. Thứ tự chạy của từng đoạn code như sau:
+Mặc định, constructor của lớp con sẽ gọi constructor không tên, không tham số của lớp cha trước khi chạy đoạn code trong constructor's body của nó. Nếu có *initializer list* (chúng ta sẽ nói tới ở phía sau), nó lại sẽ được chạy trước constructor của lớp cha. Thứ tự chạy của từng đoạn code như sau:
 1. initializer list
 2. constructor không tham số của lớp cha
-3. constructor không tham số của lớp chính
+3. constructor không tham số của lớp hiện tại
 
-Trong trường hợp lớp cha không có constructor không tên, không tham số, chúng ta phải gọi thay thế một constructor khác của lớp cha bằng cách sử dụng `:` phía sau của constructor và trước thân của constructor
+Trong trường hợp lớp cha không có constructor không tên, không tham số, chúng ta phải gọi thay thế một constructor khác của lớp cha bằng cách sử dụng `:`
 ```
 class Person {
   String? firstName;
@@ -184,7 +144,7 @@ class Employee extends Person {
 
 ##### Initializer list
 
-Initializer list là một cú pháp cho phép việc khởi tạo instance variable trước khi constructor's body được chạy
+Initializer list là một cú pháp cho phép việc khởi tạo instance variable trước khi constructor's body được thực hiện
 ```
 // Initializer list sets instance variables before
 // the constructor body runs.
@@ -195,4 +155,74 @@ Point.fromJson(Map<String, double> json)
 }
 ```
 
-Trong quá trình phát triển
+Trong quá trình phát triển, chúng ta có thể sử dụng `assert` để  validate tham số của constructor
+```
+Point.withAssert(this.x, this.y) : assert(x >= 0) {
+  print('In Point.withAssert(): ($x, $y)');
+}
+```
+
+##### Redirecting constructor
+
+Thỉnh thoảng, mục đích duy nhất của một constructor là gọi đến một constructor khác trong cùng class đó. Cúp pháp để gọi đến một constructor khác là
+```
+class Point {
+  double x, y;
+
+  // The main constructor for this class.
+  Point(this.x, this.y);
+
+  // Delegates to the main constructor.
+  Point.alongXAxis(double x) : this(x, 0);
+}
+```
+
+##### Constant constructor
+
+Để khởi tạo các object là *compile-time constant*, chúng ta có thể khai báo class đó với `const` constructor và các `final` instance variable
+```
+class ImmutablePoint {
+  static const ImmutablePoint origin = ImmutablePoint(0, 0);
+
+  final double x, y;
+
+  const ImmutablePoint(this.x, this.y);
+}
+```
+
+Tuy nhiên, khi sử dụng *constant constructor*, ta vẫn phải thêm từ khóa `const` thì object được tạo mới là `compile-time constant`. Bạn có thể xem lại phần [Sử dụng constructor]()
+
+##### Factory constructor
+
+Sử dụng từ khóa `factory` trong trường hợp constructor không phải lúc nào cũng tạo ra một instance mới. Ví dụ: một *factory constructor* có thể trả về một instance được lấy ra từ cache hoặc trả về một instace có kiểu dữ liệu subtype. Ngoài ra, *factory constructor* còn được sử dụng để khởi tạo final variable mà đoạn code khởi tạo này không thể thực hiện trong *initializer list*
+```
+class Logger {
+  final String name;
+  bool mute = false;
+
+  // _cache is library-private, thanks to
+  // the _ in front of its name.
+  static final Map<String, Logger> _cache =
+      <String, Logger>{};
+
+  factory Logger(String name) {
+    return _cache.putIfAbsent(
+        name, () => Logger._internal(name));
+  }
+
+  factory Logger.fromJson(Map<String, Object> json) {
+    return Logger(json['name'].toString());
+  }
+
+  Logger._internal(this.name);
+
+  void log(String msg) {
+    if (!mute) print(msg);
+  }
+}
+```
+Ở đoạn code phía trên, ta thấy
+- Một factory constructor của `Logger` trả về một instance lấy ra từ cache hoặc khởi tạo mới nếu instance không có trong cache.
+- Constructor `Logger.fromJson` khởi tạo biến final `name` từ một JSON object
+
+**Note**: Với *factory constructor*, ta có thể liên tưởng nó với các hàm khởi tạo static `newInstance` trong *java* hơn là các constructor thông thường. Bởi vậy, các *factory constructor* cũng cần trả về một object thay vì không trả về gì như constructor thông thường

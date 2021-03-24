@@ -92,7 +92,7 @@ Các lớp con sẽ không kế thừa các constructor từ lớp cha. Nếu m�
 
 ##### Named constructor
 
-*Dart* cũng hỗ trợ việc đặt tên cho constructor để việc khởi tạo có ý nghĩa dễ nhận biết hơn:
+Trong *Dart*, mỗi class chỉ có thể có 1 default constructor duy nhất. Đó là constructor không có tên được khai báo đầu tiên trong class. Nếu bạn muốn có thêm constructor cho class đó, bạn bắt buộc phải đặt tên cho constructor mới này:
 ```
 class Point {
   double x = 0;

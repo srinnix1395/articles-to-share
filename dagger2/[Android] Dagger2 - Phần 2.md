@@ -1,4 +1,33 @@
-### Dagger 2
+[Android] Dagger 2 - Phần 2: Into the Dagger 2
+
+Bài viết là phần thứ 2 của series bài học vỡ lòng về Dagger 2. Nếu bạn chưa đọc phần trước, bạn có thể ghi danh vào lớp học [tại đây](https://kipalog.com/posts/Android--Dagger-2---Phan-1--Cac-khai-niem-co-ban)
+
+# Các bài học để lên lớp
+
+1. [[Android] Dagger 2 - Phần 1: Các khái niệm cơ bản](https://kipalog.com/posts/Android--Dagger-2---Phan-1--Cac-khai-niem-co-ban)
+2. [Android] Dagger 2 - Phần 2: Into the Dagger 2 (Bạn đang ở đây)
+3. [[Android] Dagger 2 - Phần 3: Custom scope trong dagger 2]()
+
+# Trong bài học trước...
+
+Chúng ta đã đi qua
+
+
+
+
+
+# Dagger
+
+
+
+
+
+
+
+
+
+
+
 
 > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
 

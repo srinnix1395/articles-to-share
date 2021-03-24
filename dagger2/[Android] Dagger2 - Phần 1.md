@@ -9,8 +9,8 @@ Mình biết đến *Dagger*(chính xác là *Dagger 2*) khi còn đi thực t�
 
 # Các bài học để lên lớp
 
-1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản (Part 1 in your area)
-2. [[Android] Dagger 2 - Phần 2: Part 2 - Into the Dagger 2]()
+1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản (Bạn đang ở đây)
+2. [[Android] Dagger 2 - Phần 2: Into the Dagger 2]()
 3. [[Android] Dagger 2 - Phần 3: Custom scope trong dagger 2]()
 
 # Kiến thức đầu vào

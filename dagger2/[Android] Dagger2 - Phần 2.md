@@ -1,22 +1,95 @@
-[Android] Dagger 2 - Phần 2: Into the Dagger 2
+[Android] Dagger 2 - Phần II: Into the Dagger 2
 
 Bài viết là phần thứ 2 của series bài học vỡ lòng về Dagger 2. Nếu bạn chưa đọc phần trước, bạn có thể ghi danh vào lớp học [tại đây](https://kipalog.com/posts/Android--Dagger-2---Phan-1--Cac-khai-niem-co-ban)
 
 # Các bài học để lên lớp
 
-1. [[Android] Dagger 2 - Phần 1: Các khái niệm cơ bản](https://kipalog.com/posts/Android--Dagger-2---Phan-1--Cac-khai-niem-co-ban)
-2. [Android] Dagger 2 - Phần 2: Into the Dagger 2 (Bạn đang ở đây)
-3. [[Android] Dagger 2 - Phần 3: Custom scope trong dagger 2]()
+1. [[Android] Dagger 2 - Phần I: Các khái niệm cơ bản](https://kipalog.com/posts/Android--Dagger-2---Phan-1--Cac-khai-niem-co-ban)
+2. [Android] Dagger 2 - Phần II: Into the Dagger 2 (Bạn đang ở đây)
+3. [[Android] Dagger 2 - Phần III: Custom scope trong dagger 2]()
 
 # Trong bài học trước...
 
-Chúng ta đã đi qua
+Chúng ta đã nói một chút về việc khởi tạo và quản lý dependency. Tiếp đó, chúng ta ngờ ngợ ra những vấn đề khi ứng dụng được scale up lên. Cuối cùng, chúng ta tìm thấy những design principle và design pattern có thể giải quyết giả thiết của bài toán ban đầu.
+
+# Đi vào bài học hôm nay...
+Chúng ta sẽ tìm hiểu sâu hơn về *Dagger 2* - công cụ sẽ giúp chúng ta ...TODO
+
+TODO: Ảnh trên unsplash
+
+Một chút kiến thức lịch sử, *Dagger* là một library được Square tạo ra để implement *dependency injection* trong *Java* (Android là một trường hợp cụ thể hơn). *Dagger 1* là một *dynamic, run-time DI framework* và đã deprecated. *Dagger 1* khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time thông qua java reflection. Bởi vậy, nó có nhược điểm là chậm và ứng dụng có thể bị crash khi chạy.
+
+*Dagger 2* được tiếp nối bởi Google và là một *fully static, compile-time DI framework*. Để khắc phục những nhược điểm của người tiền nhiệm, *Dagger 2* sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace hơn.
+
+Để bắt đầu, chúng ta cần nói qua về một khái niệm quan trọng trong *Dagger* mà chúng ta hay được nghe tới nhưng lại ít được giải thích tường minh. Đó là *dependency graph*.
+
+# Dependency graph
+
+*Dependency graph* trong *Dagger* có thể hiểu là một cái graph biểu diễn những mối quan hệ của các class với những dependency của nó. *Dependency graph* được biểu diễn bằng một *Directed A-cyclic Graph* - đồ thị có hướng không tuần hoàn (hay chính là *DAG* trong *Dagger*).
+
+Chúng ta sẽ sửa đổi một chút ví dụ bài trước và tạo ra một *dependency graph* để hiểu rõ hơn khái niệm này:
+```
+class Student {
+
+    var book: TextBook
+
+    var pen: Pen
+
+    constructor(book: TextBook, pen: Pen) {
+       this.book = book
+        this.pen = pen
+    }
+
+    fun learn() {
+        println("Using a pen to learning ${book.getSubjectName()}")
+    }
+}
+
+data class Pen (val ink: Ink)
+
+data class Ink(val color: Int = Color.BLACK)
+```
+
+Ở đây ta thấy, `TextBook` và `Pen` là dependency của `Student` và `Ink` là dependency của `Pen`. Từ đó, ta có *dependency graph* như sau:
+
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p2g5hyoqsd_Screenshot%20from%202021-03-25%2017-47-37.png">
+</p>
+
+Như ta thấy ở hình trên, mỗi mũi tên có hướng biểu diễn một mối quan hệ phụ thuộc. Nhìn vào đây, ta cũng thấy nếu cần khởi tạo `Pen`, cần khởi tạo `Ink` trước. Bởi vậy, *dependency graph* không thể tồn tại những vòng lặp đóng hay a circular dependency vì *Dagger* sẽ không biết đâu là điểm khởi tạo đầu tiên.
+
+Mục tiêu của chúng ta khi muốnimplement *Dagger* là chúng ta cần phải thêm vào *dependency graph* các dependency sao cho
 
 
 
 
 
-# Dagger
+
+
+
+
+
+Để bắt đầu với *Dagger 2*, chúng ta sẽ tìm hiểu những annotation được sử dụng để library này có thể gen code cho chúng ta.
+
+# Annotation trong Dagger 2
+
+*Annotation* là một dạng **chú thích** hoặc một dạng **metadata** được dùng để cung cấp thông tin cho mã nguồn *Java*. *Dagger 2* sử dụng các thông tin có được thông qua truy vấn các annotation để gen code khi compile.
+
+Các annotation cơ bản trong *Dagger 2* là:
+* `@Component` - đánh dấu một interface (dependency graph) là cầu nối giữa cung - `@Module` và cầu - `@Inject`.
+* `@Inject` - đánh dấu đâu là nơi cần dependency.
+* `@Module` - đánh dấu một class, nơi cung cấp các dependency
+* `@Provides` - đánh dấu các method nằm bên trong `@Module` và thể hiện cách khởi tạo các dependency.
+* `@Scope` - thể hiện vòng đời (scope) của dependency, từ đó giúp ta tạo ra dependency phù hợp với những trường hợp khác nhau.
+* `@Qualifier` - định danh để phân biệt các dependency có cùng kiểu dữ liệu với nhau.
+
+Với những annotation n
+
+
+
+Gòi xong, vậy là lý thuyết về *Dagger 2* đã xong, chỉ có vậy à. Mình cá là các bạn vẫn chưa hiểu gì đâu :D. Đùa chút chứ cái này phải thực hành rồi từ đó nghiền ngẫm lại lý thuyết thì mới vỡ ra được. Vậy thì chúng ta sẽ tới ngay với phần thực hành implement *Dagger 2*
+
+# The very first basic program
 
 
 
@@ -29,25 +102,10 @@ Chúng ta đã đi qua
 
 
 
-> Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
 
-Dagger là một library được Square tạo ra để implement DI trong Android. Hiện tại, Dagger có 2 version:
-* Dagger 1 là một *dynamic, run-time DI framework* được Square viết và đã deprecated. Dagger 1 khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time bằng cách sử dụng reflection. Bởi vậy, nó có nhược điểm là reflection thì chậm và app có thể bị crash khi chạy.
-* Dagger 2 là một *fully static, compile-time DI framework* được maintain bởi Google. Để khắc phục những nhược điểm của Dagger 1, Dagger 2 không sử dụng reflection để gen code lúc run-time nữa mà sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace.
 
-#### Annotation trong Dagger 2
 
-*Annotation* là một class chứa các metadata của các class, các method, các field hoặc thậm chí là các annotation khác. Từ đó, *Dagger 2* dựa vào các thông tin có được từ các annotation để "viết" code khi compile. Các annotation cơ bản trong *Dagger 2* là:
-* *@Component* - đánh dấu một interface (dependency graph) là cầu nối giữa cung - *@Module* và cầu - *@Inject*.
-* *@Inject* - đánh dấu "đâu" là nơi "cần một dependency".
-* *@Module* - đánh dấu một class, nơi "cung cấp các dependency"
-* *@Provides* - đánh dấu các method nằm bên trong *@Module* và thể hiện "cách khởi tạo các dependency".
-* *@Scope* - thể hiện vòng đời (scope) của các dependency, từ đó giúp ta tạo ra các global singleton hoặc local singleton.
-* *@Qualifier* - annotation này giúp phân biệt các dependency có cùng kiểu dữ liệu với nhau.
 
-Trong đó, 3 annotation đầu tiên là 3 annotation quan trọng nhất mà chúng ta cần phải nhớ để implement Dagger 2. Các annotation còn lại sẽ không phải là vấn đề nếu ta hiểu rõ cách hoạt động của *Dagger 2* từ 3 annotation đầu tiên.
-
-# Thực hành
 
 Với một project Android, ta sẽ cần nhiều dependency khác nhau với các vòng đời khác nhau:
 * "Global" singleton là những dependency tồn tại trong toàn bộ vòng đời của ứng dụng: *Context* hay các utility class mà cần được sử dụng ở nhiều nơi trong ứng dụng.
@@ -135,5 +193,3 @@ interface AppComponent {
 ```
 
 Tiếp theo, chúng ta khai báo `AppComponent` - cầu nối giữa *@Module* và *@Inject*, bằng cách sử dụng annotation *@Component*. Khi khai báo như trên, component này bao gồm 2 module là `ApplicationModule` và `ApiModule`. Điều này có nghĩa là ở class nào mà inject component này vào, class đó có thể yêu cầu được component này cung cấp các dependency mà được khai báo trong 2 module kia.
-
-Chúng ta đã hoàn thành

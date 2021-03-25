@@ -1,6 +1,6 @@
-[Android] Dagger 2 - Phần 1: Các khái niệm cơ bản
+[Android] Dagger 2 - Phần I: Các khái niệm cơ bản
 
-Mình biết đến *Dagger*(chính xác là *Dagger 2*) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement *DI* trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng *DI* có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về *DI* mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với *DI* trong Android.
+Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement *DI* trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng *DI* có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về *DI* mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với *DI* trong Android.
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg">
@@ -9,9 +9,9 @@ Mình biết đến *Dagger*(chính xác là *Dagger 2*) khi còn đi thực t�
 
 # Các bài học để lên lớp
 
-1. [Android] Dagger 2 - Phần 1: Các khái niệm cơ bản (Bạn đang ở đây)
-2. [[Android] Dagger 2 - Phần 2: Into the Dagger 2]()
-3. [[Android] Dagger 2 - Phần 3: Custom scope trong dagger 2]()
+1. [Android] Dagger 2 - Phần I: Các khái niệm cơ bản (Bạn đang ở đây)
+2. [[Android] Dagger 2 - Phần II: Into the Dagger 2]()
+3. [[Android] Dagger 2 - Phần III: Custom scope trong dagger 2]()
 
 # Kiến thức đầu vào
 
@@ -233,6 +233,8 @@ class Student {
 }
 ```
 
+Đối với kiểu inject này, khi có chỗ nào cần một đối tượng `Student`, một đối tượng mới sẽ được khởi tạo và một đối tượng `TextBook` cũng được khởi tạo và truyền vào `Student`.
+
 ##### Property injection
 
 Đối với *property injection*, ta cần để access modifier của property muốn được inject thành *public* bởi cách inject này thực chất là *injector class* sẽ inject *service class* trực tiếp bằng cách gán giá trị.
@@ -241,33 +243,48 @@ class Student {
 
     lateinit var book: TextBook
 
+    constructor() {
+      Injector.inject(this)
+    }
+
     fun learn() {
         println("Learning ${book.getSubjectName()}")
     }
 }
+
+object Injector {
+
+    fun inject(student: Student) {
+        student.book = createBook();
+    }
+
+    private fun createBook(): TextBook {
+        return MathBook()
+    }
+}
 ```
+
+Ở đây, khi khởi tạo `Student` (hoặc một một lúc nào khác mà chúng ta muốn), chúng ta sẽ yêu cầu `Injector` cung cấp dependency cho `Student`, và *Injector* sẽ thỏa mãn chúng ta.
 
 ##### Method injection
 
-Để inject bằng *method injection*, *client class* cần implement một interface chứa method setter để *injector class* truyền *service class* vào *client class*
+Để inject bằng *method injection*, *client class* cần có một setter method để *injector class* truyền *service class* vào *client class*
 ```
-interface TextBookDependency {
-    fun setDependency(book: TextBook)
-}
+class Student {
 
-class Student : TextBookDependency {
-
-    lateinit var book: TextBook
+    private lateinit var book: TextBook
 
     fun learn() {
         println("Learning ${book.getSubjectName()}")
     }
 
-    override fun setDependency(book: TextBook) {
+    fun setTextBook(book: TextBook) {
         this.book = book
     }
 }
 ```
+
+Với kiểu inject này, sẽ được inject thông qua function `setTextBook()` tại mộ thời điểm nào đó.
 
 Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã bắt đầu vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi mãi tuổi 18.
 

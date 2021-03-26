@@ -50,30 +50,21 @@ data class Pen (val ink: Ink)
 data class Ink(val color: Int = Color.BLACK)
 ```
 
-Ở đây ta thấy, `TextBook` và `Pen` là dependency của `Student` và `Ink` là dependency của `Pen`. Từ đó, ta có *dependency graph* như sau:
+... và đây là *dependency graph* tương ứng:
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p2g5hyoqsd_Screenshot%20from%202021-03-25%2017-47-37.png">
 </p>
 
-Như ta thấy ở hình trên, mỗi mũi tên có hướng biểu diễn một mối quan hệ phụ thuộc. Nhìn vào đây, ta cũng thấy nếu cần khởi tạo `Pen`, cần khởi tạo `Ink` trước. Bởi vậy, *dependency graph* không thể tồn tại những vòng lặp đóng hay a circular dependency vì *Dagger* sẽ không biết đâu là điểm khởi tạo đầu tiên.
+Ở đây, mỗi mũi tên có hướng trong đồ thị biểu diễn một mối quan hệ phụ thuộc: `Student`phụ thuộc vào `TextBook` và `Pen`, `Pen` phụ thuộc vào `Ink`. Vì những sự phụ thuộc này, ta cần khởi tạo các module cấp thấp trước rồi mới có thể khởi tạo được các module cấp cao: khởi tạo `Ink` trước rồi mới đến `Pen`. Và cũng bởi vì cần có thứ tự khởi tạo trước sau như vậy, *dependency graph* không thể tồn tại những vòng lặp đóng hay *a circular dependency* vì *Dagger* sẽ không biết đâu là điểm khởi tạo đầu tiên.
 
-Mục tiêu của chúng ta khi muốnimplement *Dagger* là chúng ta cần phải thêm vào *dependency graph* các dependency sao cho
+Khi implement *Dagger*, chúng ta cần fulfill *dependency graph* trước khi chạy chương trình và giao phần việc còn lại cho *Dagger*. VD: để khởi tạo `Pen`, ta cần khởi tạo `Ink` trước. Nhưng nếu ta chưa thêm `Ink` vào *dependency graph*, *Dagger* sẽ không biết khởi tạo `Ink` như thế nào.
 
-
-
-
-
-
-
-
-
-
-Để bắt đầu với *Dagger 2*, chúng ta sẽ tìm hiểu những annotation được sử dụng để library này có thể gen code cho chúng ta.
+Vậy, làm thế nào để fulfill *dependency graph* trong *Dagger 2*? Câu trả lời là *Dagger 2* sẽ cung cấp cho chúng ta các annotation để làm việc đó.
 
 # Annotation trong Dagger 2
 
-*Annotation* là một dạng **chú thích** hoặc một dạng **metadata** được dùng để cung cấp thông tin cho mã nguồn *Java*. *Dagger 2* sử dụng các thông tin có được thông qua truy vấn các annotation để gen code khi compile.
+*Annotation* là một dạng **chú thích** hoặc một dạng **metadata** được dùng để cung cấp thông tin cho mã nguồn *Java*. *Dagger 2* sẽ sử dụng các thông tin có được thông qua truy vấn các annotation để gen code khi compile.
 
 Các annotation cơ bản trong *Dagger 2* là:
 * `@Component` - đánh dấu một interface (dependency graph) là cầu nối giữa cung - `@Module` và cầu - `@Inject`.
@@ -83,13 +74,16 @@ Các annotation cơ bản trong *Dagger 2* là:
 * `@Scope` - thể hiện vòng đời (scope) của dependency, từ đó giúp ta tạo ra dependency phù hợp với những trường hợp khác nhau.
 * `@Qualifier` - định danh để phân biệt các dependency có cùng kiểu dữ liệu với nhau.
 
-Với những annotation n
-
-
-
 Gòi xong, vậy là lý thuyết về *Dagger 2* đã xong, chỉ có vậy à. Mình cá là các bạn vẫn chưa hiểu gì đâu :D. Đùa chút chứ cái này phải thực hành rồi từ đó nghiền ngẫm lại lý thuyết thì mới vỡ ra được. Vậy thì chúng ta sẽ tới ngay với phần thực hành implement *Dagger 2*
 
 # The very first basic program
+
+Chúng ta sẽ có một ứng dụng đơn giản sử dụng mô hình MVP như sau:
+
+
+**Note**: Những bạn đã sử dụng mô hình MVP rồi chắc sẽ thắc mắc sao chẳng có interface
+
+
 
 
 

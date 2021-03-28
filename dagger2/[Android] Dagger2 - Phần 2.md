@@ -80,8 +80,44 @@ Gòi xong, vậy là lý thuyết về *Dagger 2* đã xong, chỉ có vậy à.
 
 Chúng ta sẽ có một ứng dụng đơn giản sử dụng mô hình MVP như sau:
 
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/u1dxoya5qb_DaggerMvpBasic.jpg">
+</p>
 
-**Note**: Những bạn đã sử dụng mô hình MVP rồi chắc sẽ thắc mắc sao chẳng có interface
+**Note**: Những bạn đã sử dụng mô hình MVP (hoặc đã thấm nhuần tư tưởng của... *Dependency inversion*) chắc sẽ thắc mắc tại sao việc giao tiếp giữa các layer chẳng có interface gì cả!?! Tuy nhiên, mình xin phép bắt đầu với một ứng dụng "cộc lốc" này trước. Sau đó, chúng ta sẽ dần dần trả món "nợ kỹ thuật" này bằng cách implement đầy đủ để nó thỏa mãn *DIP* để ứng dụng gần với thực tế nhất để các bạn có thể tham khảo.
+
+Nhìn vào mối quan hệ giữa các class, ta thấy cần phải xây dựng một *dependency graph* với các mối quan hệ sau:
+* Presenter là dependency của Activity
+* Repository là dependency của Presenter
+* ApiHelper, PreferenceHelper và DbHelper là dependency của Repository
+
+Để thêm một class vào *dependency graph*, chúng ta sử dụng annotation `@Inject`
+
+### @Inject
+
+Chúng ta sẽ thêm `@Inject` vào constructor của class muốn thêm vào *dependency graph*
+```
+class Presenter @Inject constructor(var repository: Repository) {
+    ...
+}
+```
+
+Tuy nhiên, vì `Presenter` cần `Repository` để có thể khởi tạo nên chúng ta phải thêm `@Inject` cả vào constructor của `Repository` nữa. Nếu không, khi compile, *Dagger* sẽ báo lỗi rằng:"`repository` không được provide nên không biết khởi tạo thế nào"
+```
+class Repository @Inject constructor(var apiHelper: ApiHelper,
+                                     var preferenceHelper: PreferenceHelper,
+                                     var dbHelper: DbHelper) {
+    ...
+}
+```
+
+Và ta cũng cần thêm `@Inject` vào các dependency của `Repository`
+```
+
+```
+
+Chúng ta đã xong việc khai báo những phần tử có mặt trong *dependency graph*.
+
 
 
 

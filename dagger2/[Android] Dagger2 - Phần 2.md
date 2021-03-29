@@ -17,7 +17,7 @@ Chúng ta sẽ tìm hiểu sâu hơn về *Dagger 2* - công cụ sẽ giúp ch�
 
 TODO: Ảnh trên unsplash
 
-Một chút kiến thức lịch sử, *Dagger* là một library được Square tạo ra để implement *dependency injection* trong *Java* (Android là một trường hợp cụ thể hơn). *Dagger 1* là một *dynamic, run-time DI framework* và đã deprecated. *Dagger 1* khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time thông qua java reflection. Bởi vậy, nó có nhược điểm là chậm và ứng dụng có thể bị crash khi chạy.
+Một chút kiến thức lịch sử, *Dagger* là một library được Square tạo ra để implement *dependency injection* trong *Java* (Android là một trường hợp cụ thể hơn). *Dagger 1* là một *dynamic, run-time DI framework* và đã deprecated. *Dagger 1* khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time thông qua java reflection. Bởi vậy, nó có nhược điểm là chậm và sẽ có run-time exception xảy ra khi chạy ứng dụng.
 
 *Dagger 2* được tiếp nối bởi Google và là một *fully static, compile-time DI framework*. Để khắc phục những nhược điểm của người tiền nhiệm, *Dagger 2* sử dụng *annotation processor* (a code generator using annotation) để "viết" code cho chúng ta khi compile. Bởi vậy, nếu có lỗi gì, app sẽ không thể run được. Cùng với đó, nguyên tắc để gen ra các đoạn code này là cố gắng bắt chước những đoạn code mà người dùng thực sự sẽ viết. Từ đó, code cũng sẽ đơn giản và dễ trace hơn.
 
@@ -97,26 +97,60 @@ Nhìn vào mối quan hệ giữa các class, ta thấy cần phải xây dựng
 
 Chúng ta sẽ thêm `@Inject` vào constructor của class muốn thêm vào *dependency graph*
 ```
-class Presenter @Inject constructor(var repository: Repository) {
-    ...
+class UserPresenter @Inject constructor(var repository: DemoRepository) { ... }
+```
+
+Tuy nhiên, vì `UserPresenter` cần `UserRepository` để có thể khởi tạo nên chúng ta phải thêm `@Inject` cả vào constructor của `UserRepository` nữa. Nếu không, khi compile, *Dagger* sẽ báo lỗi rằng:"`repository` không được provide nên không biết khởi tạo thế nào!"
+```
+class UserRepository @Inject constructor(var apiHelper: ApiHelper,
+                                         var preferenceHelper: PreferenceHelper,
+                                         var dbHelper: DbHelper) { ... }
+```
+
+Tương tự, chúng ta cũng cần thêm `@Inject` vào các dependency của `UserRepository`
+```
+class ApiHelper @Inject constructor() { ... }
+class PreferenceHelper @Inject constructor() { ... }
+class DbHelper @Inject constructor() { ... }
+```
+
+**Note**: Nhớ lại một chút phần I về [Các kiểu inject](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Cac-khai-niem-co-ban#toc-c-c-ki-u-inject), ta thấy đây là kiểu inject bằng constructor.
+
+Vậy là chúng ta đã hoàn thành việc khai báo những phần tử có mặt trong *dependency graph*. Liên hệ với phần I, đó là các *service class*. Tiếp theo, chúng ta cần khai báo *injector class*, đó là một class trung gian và có nhiệm vụ inject *service class* vào *client class*. Để tạo ra một *injector class*, chúng ta sử dụng annotation `@Compomnent`
+
+### @Compomnent
+
+Component trong *Dagger* là một interface được annotate với `@Component`. *Dagger* sẽ sử dụng component và các thông tin chúng ta khai báo thông qua `@Inject` và build lên *dependency graph* thỏa mãn các mối quan hệ mà chúng ta đã khai báo. Bên trong component này, chúng ta có thể khai báo các function trả về các dependency mà chúng ta muốn lấy ra.
+```
+@Component
+interface UserComponent {
+    fun userPresenter(): UserPresenter
 }
 ```
 
-Tuy nhiên, vì `Presenter` cần `Repository` để có thể khởi tạo nên chúng ta phải thêm `@Inject` cả vào constructor của `Repository` nữa. Nếu không, khi compile, *Dagger* sẽ báo lỗi rằng:"`repository` không được provide nên không biết khởi tạo thế nào"
+**Note**: tên của function này không quan trọng mà quan trọng là kiểu mà function này trả về.
+
+Tiếp đó, chúng ta cần phải build project thì *Dagger* mới gen code ra cho chúng ta từ những thông tin trên. Từ đó, ta mới có thể truy cập được các dependency mà chúng ta đã khai báo. Sau khi build xong, ta sẽ thấy code được *Dagger* gen ra trong thư mục `app/build/generated/source`, các bạn có thể đọc để thấy code cũng tương đối dễ hiểu ;). Và class mà chúng ta cần quan tâm là `DaggerUserComponent`. Class này được gen ra từ interface component ở trên với format tên là *Dagger* + *Component name* . Class này sẽ implement component mà ta đã khai báo, đồng thời chứa các function override lại các function cung cấp dependency bên trong interface. Thông qua những function này, chúng sẽ có thể lấy ra dependency mà chúng ta muốn.
 ```
-class Repository @Inject constructor(var apiHelper: ApiHelper,
-                                     var preferenceHelper: PreferenceHelper,
-                                     var dbHelper: DbHelper) {
-    ...
+class UserActivity : FragmentActivity() {
+
+    private lateinit var mUserPresenter: UserPresenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ...
+
+        val userComponent = DaggerUserComponent.create()
+        mUserPresenter = userComponent.userPresenter()
+    }
 }
 ```
 
-Và ta cũng cần thêm `@Inject` vào các dependency của `Repository`
-```
+Vậy là chúng ta đã có được một object `UserPresenter` với đầy đủ những dependency mà chúng ta mong muốn (kể cả những dependency con của dependency con) mà không cần phải quan tâm xem những dependency đó được khởi tạo ở đâu và quản lý như thế nào. Việc của chúng ta chỉ cần là khai báo những thông tin cần thiết và để phần việc còn lại cho *Dagger*.
 
-```
 
-Chúng ta đã xong việc khai báo những phần tử có mặt trong *dependency graph*.
+
+
+
 
 
 

@@ -15,7 +15,10 @@ Chúng ta đã nói một chút về việc khởi tạo và quản lý dependen
 # Đi vào bài học hôm nay...
 Chúng ta sẽ tìm hiểu sâu hơn về *Dagger 2*: trước là lý thuyết và sau là từng bước implement một chương trình đơn giản.
 
-TODO: Ảnh trên unsplash
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/29vjyokjrl_joshua-woroniecki-6YHlHIVROzg-unsplash.jpg">
+  Into the woods but it won't be long<br>Photo by <a href="https://unsplash.com/@joshua_j_woroniecki?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joshua Woroniecki</a> on <a href="https://unsplash.com/s/photos/sunshine-pine-forest?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+</p>
 
 Một chút kiến thức lịch sử, *Dagger* là một library được *Square* tạo ra để implement *dependency injection* trong *Java* (*Android* là một trường hợp cụ thể hơn). *Dagger 1* là một *dynamic, run-time DI framework* và đã deprecated. *Dagger 1* khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time thông qua java reflection. Bởi vậy, nó có nhược điểm là chậm và có thể có run-time exception xảy ra khi chạy ứng dụng.
 
@@ -269,7 +272,7 @@ object RepositoryModule {
 
 **Note**: Các dependency còn lại như `ApiHelper`, `PreferenceHelper` và `DbHelper` thì các bạn làm tương tự nhé: `ctrl-c`, `ctrl-vvvvvvvv` :D
 
-Các bạn có thể thấy cách khai báo các dependency này là hoàn toàn giống nhau khi chúng ta provide một interface và trả về implementation của interface đó. Đây có thể coi là một đoạn code lặp mà chúng ta thì ngày càng lười :D. Bởi vậy, *Dagger* cung cấp thêm một annotation nữa cho chúng ta: `@Bind`
+Các bạn có thể thấy cách khai báo các dependency này là hoàn toàn giống nhau khi chúng ta provide một interface và trả về implementation của interface đó. Đây có thể coi là một đoạn code lặp mà chúng ta thì ngày càng lười :D. Bởi vậy, *Dagger*  lại phải cung cấp thêm một annotation nữa cho chúng ta: `@Bind`
 ```
 @Module
 abstract class PresenterModule {
@@ -286,7 +289,7 @@ abstract class RepositoryModule {
 }
 ```
 
-Các binding method phải nằm trong một abstract class module và module đó không được lẫn vào các `@Provides` function. Đó là vì *Dagger* sử dụng thông tin có được từ 2 annotation này là khác nhau. Để hiểu kỹ hơn, các bạn có thể tham khảo [ở đây](https://dagger.dev/dev-guide/faq.html#why-is-binds-different-from-provides).
+**Note**: Các binding function cần phải nằm trong một abstract class module và module này không được chứa lẫn lộn cả binding function và provides function. Đó là vì *Dagger* sử dụng thông tin có được từ 2 annotation này là khác nhau để khởi tạo dependency. Để hiểu kỹ hơn, các bạn có thể tham khảo [ở đây](https://dagger.dev/dev-guide/faq.html#why-is-binds-different-from-provides).
 
 ### @Qualifier
 

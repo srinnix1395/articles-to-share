@@ -4,7 +4,7 @@ Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực t�
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg">
-  Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  An awaiting adventure...<br>Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 </p>
 
 # Các bài học để lên lớp

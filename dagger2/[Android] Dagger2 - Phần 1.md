@@ -286,6 +286,8 @@ class Student {
 
 Với kiểu inject này, sẽ được inject thông qua function `setTextBook()` tại mộ thời điểm nào đó.
 
-Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã bắt đầu vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi mãi tuổi 18.
+---
 
-Cuối cùng, mình hy vọng các bạn sẽ phân biệt được các khái niệm nghe có vẻ na ná nhau này, sau đó là nắm rõ, trước khi đi vào tìm hiểu một công cụ không mới nhưng không phải ai cũng chắc tay khi sử dụng; một công cụ nhằm giải quyết những nhàm chán lặp lại khi viết code nếu chúng ta tự implement các khái niệm đã được đề cập ở phần I này. Đó là **Dagger 2**.
+Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi ở tuổi 18...
+
+BTW, mình hy vọng bài viết trước hết sẽ giúp các bạn phân biệt được các khái niệm nghe có vẻ na ná nhau này, sau đó là nắm rõ, trước khi đi vào tìm hiểu một công cụ không mới nhưng không phải ai cũng chắc tay khi sử dụng; một công cụ nhằm giải quyết những nhàm chán lặp lại khi viết code nếu chúng ta tự implement các khái niệm đã được đề cập ở phần I này. Đó là **Dagger 2**.

@@ -377,4 +377,6 @@ Cuối cùng, sau khi đã hoàn thành việc khai báo các dependency không 
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/4w1wm4uy48_Dagger2_component.jpg">
 </p>
 
+---
+
 Gòi xong, hy vọng với những kiến thức nhiêu đây, bạn đã có thể bắt đầu và không thấy nản với *Dagger 2* nữa. Tuy chương trình trên đây chỉ là một chương trình nhỏ, chúng ta có thể sẽ chưa thấy hết được sức mạnh của *Dagger 2* khi các dependency là chưa nhiều. Tuy nhiên, với một ứng dụng phức tạp hơn với nhiều màn hình hơn, mỗi màn hình sẽ sử dụng một loạt các dependency kèm theo thì việc khởi tạo và quản lý sẽ rất mất thời gian khi phải viết rất nhiều những đoạn code lặp và còn dễ gây ra lỗi nữa. *Dagger 2* chính là "the right tool" giúp chúng ta loại bỏ mốí quan tâm đấy và tập trung vào các phần quan trọng hơn của chương trình.

@@ -123,7 +123,7 @@ Vậy là chúng ta đã hoàn thành việc khai báo những phần tử có m
 
 ### @Component
 
-Component trong *Dagger 2* là một interface được annotate với `@Component`. *Dagger* sẽ sử dụng component và các thông tin chúng ta khai báo thông qua `@Inject` và build lên *dependency graph* thỏa mãn các mối quan hệ mà chúng ta đã khai báo. Bên trong component này, chúng ta có thể khai báo các function trả về các dependency mà chúng ta muốn lấy ra.
+Component trong *Dagger 2* là một interface được annotate với `@Component`. *Dagger* sẽ sử dụng component và các thông tin chúng ta khai báo thông qua `@Inject` và build lên *dependency graph* thỏa mãn các mối quan hệ mà chúng ta đã khai báo. Bên trong component này, chúng ta có thể khai báo các function trả về các dependency mà chúng ta cần(`UserPresenter`).
 ```
 @Component
 interface UserComponent {
@@ -133,7 +133,7 @@ interface UserComponent {
 
 **Note**: tên của function này không quan trọng mà quan trọng là kiểu mà function này trả về.
 
-Tiếp đó, chúng ta cần phải build project thì *Dagger* mới gen code ra cho chúng ta từ những thông tin trên. Từ đó, ta mới có thể truy cập được các dependency mà chúng ta đã khai báo. Sau khi build xong, ta sẽ thấy code được *Dagger* gen ra trong thư mục `app/build/generated/source`, các bạn có thể đọc để thấy code cũng tương đối dễ hiểu ;). Và class mà chúng ta cần quan tâm là `DaggerUserComponent`. Class này được gen ra từ interface component ở trên với format tên là *Dagger* + *Component name* . Class này sẽ implement component mà ta đã khai báo, đồng thời chứa các function override lại các function cung cấp dependency bên trong interface. Thông qua những function này, chúng sẽ có thể lấy ra dependency mà chúng ta cần mà không cần quan tâm các dependency này được khởi tạo ở đâu và quản lý như thế nào.
+Tiếp đó, chúng ta cần phải build project để *Dagger* gen code cho chúng ta. Sau khi build xong, ta sẽ thấy code được *Dagger* gen ra trong thư mục `app/build/generated/source`, các bạn có thể đọc để thấy code cũng tương đối dễ hiểu ;). Và class mà chúng ta cần quan tâm là `DaggerUserComponent`. Class này được gen ra từ interface component ở trên với format tên là *Dagger* + *Component name* . Class này sẽ implement interface component và override lại các function mà chúng ta khai báo bên trong interface. Thông qua những function này, chúng ta có thể lấy ra dependency cần thiết mà không cần quan tâm các dependency này được khởi tạo ở đâu và quản lý như thế nào.
 ```
 class UserActivity : FragmentActivity() {
 
@@ -148,15 +148,15 @@ class UserActivity : FragmentActivity() {
 }
 ```
 
-Tuy nhiên, không phải dependency nào cũng do chúng ta tạo ra hay có kiểu là một class có thể khởi tạo được. Bởi vậy, chúng ta cần một "cái kho" khác, nơi chúng ta cung cấp cho *Dagger* cách khởi tạo các dependency. Cái kho đó trong *Dagger 2* gọi là các module.
+Tuy nhiên, dependency cũng có dependency this, dependency that, không phải class nào cũng do chúng ta tạo ra hay có kiểu là một class có thể khởi tạo được(interface/abstract class). Bởi vậy, chúng ta cần thêm một "cái kho", nơi chúng ta chỉ cho *Dagger* biết cách khởi tạo các dependency that này. Cái kho đó trong *Dagger 2* gọi là các module.
 
 ### @Module
 
-Module trong *Dagger 2* có thể là một class hoặc một abstract class, nơi ta cung cấp những dependency ta muốn thêm vào *dependency graph*. Khi build *dependency graph*, Dagger component ngoài tìm kiếm ở những constructor có annotation `@Inject`, nó sẽ tìm thêm trong các module được gắn với nó.
+Module trong *Dagger 2* có thể là một class hoặc một abstract class, nơi chúng ta cung cấp những dependency ta muốn thêm vào *dependency graph*. Khi build *dependency graph*, Dagger component ngoài tìm kiếm ở những constructor có annotation `@Inject` như chúng ta đã làm ở trên, nó sẽ tìm thêm trong các module được gắn với nó.
 
-**Note**: Có một hiểu nhầm rằng *Dagger 2* bắt buộc cần các module mới có thể hoạt động. Tuy nhiên, như chúng ta đã thấy ở trên, chúng ta không cần khai báo một module để cung cấp các dependency mà có thể khởi tạo trực tiếp các dependency đó thông qua constructor.
+**Note**: Có một misconception rằng không có module thì *Dagger 2* không gáy được :|. Tuy nhiên, chương trình đang xét cho ta thấy rằng không nhất thiết cần có các module trong trường hợp dependency đều là những class có thể khởi tạo được thông qua constructor. Chỉ cho *Dagger* biết cách khởi tạo một dependency thông qua module là 1 cách nhưng không phải là duy nhất.
 
-Tiếp tục ví dụ ở trên, chúng ta sẽ thêm library *Retrofit* để call API và sử dụng *Gson* để parse object. Ở đây, ta sẽ có một API service là `UserServices` chứa các API liên quan đến user. Các bước để config *Retrofit* và tạo `UserServices` là
+Tiếp tục ví dụ ở trển với một requirement mới, chúng ta cần thêm library *Retrofit* để call API và sử dụng *Gson* để parse object. Bởi vậy, chúng ta sẽ tạo một API service là `UserServices` chứa các API liên quan đến user. Các bước để config *Retrofit* và tạo `UserServices` là:
 ```
 val baseUrl = "https://api.github.com/"
 val gson = GsonBuilder().setDateFormat("ddMMyyyy").create()
@@ -168,39 +168,43 @@ val retrofit = Retrofit.Builder()
 val userServices: UserServices = retrofit.create(UserServices::class.java)
 ```
 
-Ta thấy `Retrofit`, `Gson` là các class không phải do chúng ta tạo ra còn `UserServices` là một interface nên để provide những dependency này cho class `ApiHelper`, chúng ta cần tạo một module. Để một class được coi là một module, ta chỉ cần thêm annotation `@Module` vào trước class đó.
+Ta thấy `Retrofit`, `Gson` và `UserServices` đều là những "dependency that" đã được nói tới. Bởi vậy, tạo ra một module thôi chứ còn gì!?! Để một class được coi là một module, ta chỉ cần thêm annotation `@Module` vào trước phần khai báo class đó.
 ```
 @Module
-class ApiModule {
+class ApiModule { ... }
+```
 
-    @Provides
-    fun provideRetrofit(baseUrl: String, gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl(baseUrl)
-            .build()
-    }
+##### @Provides
 
-    @Provides
-    fun provideBaseUrl(): String {
-        return "https://api.github.com/"
-    }
+Bên trong module, chúng ta cần chỉ cho *Dagger* biết cách khởi tạo dependency bằng cách khai báo các function được annotate với `@Provides` và trả về kiểu của dependency mà chúng ta cần. Với đoạn code config *Retrofit* và khởi tạo `UserServices` ở trên, chúng ta có thể tách ra thành 4 function riêng rẽ trả về 4 dependency chúng ta mong muốn:`baseUrl`, `gson`, `retrofit` và `userServices` để sau này nếu có chỗ khác cần, code sẽ không bị lặp.
+```
+@Provides
+fun provideRetrofit(baseUrl: String, gson: Gson): Retrofit {
+    return Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .baseUrl(baseUrl)
+        .build()
+}
 
-    @Provides
-    fun provideGson(): Gson {
-        return GsonBuilder().setDateFormat("ddMMyyyy").create()
-    }
+@Provides
+fun provideBaseUrl(): String {
+    return "https://api.github.com/"
+}
 
-    @Provides
-    fun provideUserServices(retrofit: Retrofit): UserServices {
-        return retrofit.create(UserServices::class.java)
-    }
+@Provides
+fun provideGson(): Gson {
+    return GsonBuilder().setDateFormat("ddMMyyyy").create()
+}
+
+@Provides
+fun provideUserServices(retrofit: Retrofit): UserServices {
+    return retrofit.create(UserServices::class.java)
 }
 ```
 
-Ngoài ra, để *Dagger* biết là ta muốn thêm một class vào *dependency graph*, ta cần thêm annotation `@Provides` cho các provide function. Tên của các provide function và thứ tự của các function đó trong module không quan trọng mà quan trọng là kiểu trả về của các function đó, *Dagger* sẽ dựa vào đó mà thêm các class đó vào *dependency graph*. Trong trường hợp trên: để provide `UserServices`, chúng ta cần một object `Retrofit`. Bởi vậy, ta sẽ provide cho *Dagger* `Retrofit`. Để khởi tạo `Retrofit`, chúng ta lại cần có một `String` và một object `Gson`. Vì thế, chúng ta tiếp tục provide cho *Dagger* cả `Gson` và `String`.
+**Note**: Tên của các provide function và thứ tự của các function đó trong module không quan trọng mà quan trọng là kiểu trả về của các function đó, *Dagger* sẽ dựa vào đó mà thêm các class vào *dependency graph*. Trong trường hợp trên: để provide `UserServices`, chúng ta cần một object `Retrofit`. Bởi vậy, ta sẽ provide cho *Dagger* `Retrofit`. Để khởi tạo `Retrofit`, chúng ta lại cần có một `String` và một object `Gson`. Vì thế, chúng ta tiếp tục provide cho *Dagger* cả `Gson` và `String`. Bởi vậy, miễn là ta satisfy các dependency đầy đủ là được.
 
-Với một component, *Dagger* cho phép chúng ta khai báo nhiều module. Và các module đó được thông với nhau nên dependency cung cấp ở module này có thể provide cho dependency ở module kia. Bởi vậy, các bạn nên nhóm các dependency liên quan vào một module để code không bị lặp. VD: `UtilsModule`
+Ngoài ra, *Dagger* cho phép chúng ta gắn nhiều module vào một component giúp cho các module đó lại được thông với nhau nên dependency cung cấp ở module này có thể provide cho dependency ở module kia. Bởi vậy, các bạn nên nhóm các dependency liên quan vào một module để code không bị lặp. VD: `UtilsModule`
 ```
 @Module
 class UtilsModule {
@@ -218,7 +222,7 @@ class UtilsModule {
 }
 ```
 
-Trong trường hợp trên, `UtilsModule` cần `Context` nên chúng ta cần truyền vào từ bên ngoài khi khởi tạo module và gán nó cho component. Chúng ta cần làm điều này bởi vì chúng ta không thể provide context ở đâu khác ngoài lấy ra từ `Application` hoặc `Activity`.... Với những module mà không cần một dependency từ bên ngoài, chúng ta không nhất thiết phải tự khởi tạo và truyền vào cho component bởi component sẽ tự làm việc đấy cho chúng ta nếu chúng ta không truyền vào.
+Khác với `ApiModule` không có một dependency nào, `UtilsModule` cần một dependency có kiểu `Context` nên chúng ta cần truyền vào từ bên ngoài khi khởi tạo module và gán nó cho component. Chúng ta cần làm điều này bởi vì `Context` không thể được provide ở đâu khác ngoài lấy ra từ `Application`, `Activity`, etc. Với những module mà không cần một dependency từ bên ngoài, chúng ta không nhất thiết phải tự khởi tạo và truyền vào cho component bởi component sẽ tự khởi tạo ở bên dưới.
 ```
 val userComponent = DaggerUserComponent.builder()
             .utilsModule(UtilsModule(this))
@@ -234,9 +238,9 @@ object ApiModule { ... }
 
 ##### @Bind
 
-Quay lại lưu ý từ đầu chương trình khi ta chỉ sử dụng các object cụ thể thay vì sử dụng interface. Giờ là lúc chúng ta có thể trả món [nợ kỹ thuật](https://buihuycuong.medium.com/technical-debt-n%E1%BB%A3-k%E1%BB%B9-thu%E1%BA%ADt-6a312eb5eb42) sau khi đã hiểu cách hoạt động của *Dagger*.
+Quay lại với quả [bát họ kỹ thuật](https://buihuycuong.medium.com/technical-debt-n%E1%BB%A3-k%E1%BB%B9-thu%E1%BA%ADt-6a312eb5eb42) đã bốc từ đầu bài viết khi chúng ta chỉ sử dụng concrete type và từ chối abstract type nhằm giảm độ phức tạp của chương trình. Và vui mừng là chúng ta đã có "the right tool" để giải quyết vấn đề rồi. It's payback time!
 
-Chúng ta sẽ tạo thêm các interface và sử dụng các interface đấy để giao tiếp:
+Chúng ta sẽ tạo thêm các interface và sử dụng các interface đấy thay vì các concrete class:
 ```
 interface UserPresenter { ... }
 class UserPresenterImpl @Inject constructor(var repository: UserRepository) : UserPresenter { ... }

@@ -1,4 +1,4 @@
-1. Part 1 - Các khái niệm cơ bản
+1. Part I - Các khái niệm cơ bản
 - What is Dependency?
 - Disadvantage of hard dependency:
   + Hard dependencies reduce the reusability
@@ -12,30 +12,28 @@
   + Fields injection: must not be "private"
   + Method injection
 
-2. Part 2 - Into the Dagger 2
+2. Part II - Into the Dagger 2
 - Dagger introduction, compare Dagger 1 and Dagger 2
-- Dagger 2
-  > Dagger 2 is a library which helps the developer to implement a pattern of Dependency Injection (one specific form of Inversion of control).
-  + Explain the meanings of each annotation:
-    . @Component
-    . @Inject
-    . @Module:
-    . @Scope
-    . @Qualifier
-    . @Provide
-- The first program with @Inject & @Compoment
-- @Module, @Provide, @Qualifier
-- Global singleton and Local singleton
-- Singleton has implicit dependency
-- Singleton creation
-  + file Module
-  + file Component
-- Dependency component vs sub-component
+- Dependency grapgh
+- Dagger 2 annotation
+  + @Component
+  + @Inject
+  + @Module:
+  + @Scope
+  + @Qualifier
+  + @Provide
+- The very first basic program with @Inject, @Compoment, @Module, @Provides, @Bind, @Qualifier
+- Field injection
 
-3. Part 3
+3. Part III -
 - @Scope
-- Scope in dagger2
-- Handle scope in dagger 2
+- Dependency component vs sub-component
+- Optional:
+  + Global singleton and Local singleton
+  + Singleton has implicit dependency
+  + Singleton creation
+    . file Module
+    . file Component
 
 #Reference
 - IOC, DIP, DI: https://www.tutorialsteacher.com/ioc/introduction
@@ -48,5 +46,5 @@
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 - Note:
   + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!
-  + Dagger 1 uses Java reflection to achieve DI, therefore it's slow and it used to perform dependency resolution at RUNTIME
-  + Dagger 2 uses Generating code to achieve DI, it used perform dependency resolution at COMPILE TIME
+  + Dagger 1 uses Java reflection to achieve DI, therefore it's slow and it used to perform dependency resolution at RUN-TIME
+  + Dagger 2 uses Generating code to achieve DI, it used perform dependency resolution at COMPILE-TIME

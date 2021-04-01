@@ -23,7 +23,7 @@ import 'string_apis.dart';
 print('42'.parseInt()); // Use an extension method.
 ```
 
-Chúng ta có thể định nghĩa ngoài *extension method* là *extension getter*, *setter* hay *operator*. *Extension method* `parseInt()` ở trên được implement như sau:
+Ngoài *extension method*, chúng ta có thể định nghĩa thêm *extension getter*, *setter* hay *operator*. *Extension method* `parseInt()` ở trên được implement như sau:
 ```
 extension NumberParsing on String {
   int parseInt() {

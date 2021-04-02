@@ -121,3 +121,18 @@ class EffectiveDoer extends Doer {
   }
 }
 ```
+
+### Callable class
+
+*Dart* cho phép một instance của một class được gọi như một function bằng cách implement `call()` trong class đó.
+```
+class WannabeFunction {
+  String call(String a, String b, String c) => '$a $b $c!';
+}
+````
+
+Tham số và kiểu trả về của `call()` hoàn toàn do chúng ta quyết định. Sau khi khai báo, chúng ta có thể gọi function `call()` như sau:
+```
+var wf = WannabeFunction();
+var out = wf('Hi', 'there,', 'gang');
+```

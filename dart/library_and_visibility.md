@@ -44,3 +44,7 @@ import 'package:lib2/lib2.dart' hide foo;
 ##### Lazy loading một library
 
 Chỉ áp dụng cho *dart2js* nên bạn có thể tìm hiểu thêm [ở đây](https://dart.dev/guides/language/language-tour#using-libraries)
+
+### Implementing libraries
+
+Các bạn tham khảo [ở đây](https://dart.dev/guides/libraries/create-library-packages) để implement một library

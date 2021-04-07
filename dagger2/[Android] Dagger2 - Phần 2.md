@@ -1,12 +1,12 @@
 [Android] Dagger 2 - Phần II: Into the Dagger 2
 
-Bài viết là phần thứ 2 của series bài học vỡ lòng về *Dagger 2*. Nếu bạn chưa đọc phần trước, bạn có thể ghi danh vào lớp học [tại đây](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Cac-khai-niem-co-ban)
+Bài viết là phần thứ II của series bài học vỡ lòng về *Dagger 2*. Nếu bạn chưa đọc phần trước, bạn có thể ghi danh vào lớp học [tại đây](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 
 # Các bài học để lên lớp
 
-1. [[Android] Dagger 2 - Phần I: Các khái niệm cơ bản](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Cac-khai-niem-co-ban)
-2. [Android] Dagger 2 - Phần II: Into the Dagger 2 (Bạn đang ở đây)
-3. [[Android] Dagger 2 - Phần III: Custom scope trong dagger 2]()
+1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
+2. [Android] Dagger 2 - Phần II: Into the Dagger 2
+3. [[Android] Dagger 2 - Phần III: The time of our dependencies]()
 
 # Trong bài học trước...
 
@@ -16,8 +16,8 @@ Chúng ta đã nói một chút về việc khởi tạo và quản lý dependen
 Chúng ta sẽ tìm hiểu sâu hơn về *Dagger 2*: trước là lý thuyết và sau là từng bước implement một chương trình đơn giản.
 
 <p align="center">
-  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/29vjyokjrl_joshua-woroniecki-6YHlHIVROzg-unsplash.jpg">
-  Into the woods but it won't be long<br>Photo by <a href="https://unsplash.com/@joshua_j_woroniecki?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joshua Woroniecki</a> on <a href="https://unsplash.com/s/photos/sunshine-pine-forest?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/y1bh782i5k_fredrik-ohlander-MU2pWu95UqA-unsplash.jpg">
+  Photo by <a href="https://unsplash.com/@fredrikohlander?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Fredrik Öhlander</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 </p>
 
 Một chút kiến thức lịch sử, *Dagger* là một library được *Square* tạo ra để implement *dependency injection* trong *Java* (*Android* là một trường hợp cụ thể hơn). *Dagger 1* là một *dynamic, run-time DI framework* và đã deprecated. *Dagger 1* khởi tạo các dependency "động", tức là việc tạo ra dependency được thực hiện lúc run-time thông qua java reflection. Bởi vậy, nó có nhược điểm là chậm và có thể có run-time exception xảy ra khi chạy ứng dụng.
@@ -100,7 +100,7 @@ Nhìn vào mối quan hệ giữa các class, ta thấy cần phải build một
 
 Chúng ta sẽ thêm `@Inject` vào constructor của class muốn thêm vào *dependency graph*
 ```
-class UserPresenter @Inject constructor(var repository: DemoRepository) { ... }
+class UserPresenter @Inject constructor(var repository: UserRepository) { ... }
 ```
 
 Tuy nhiên, vì `UserPresenter` cần `UserRepository` để có thể khởi tạo nên chúng ta phải thêm `@Inject` cả vào constructor của `UserRepository` nữa. Nếu không, khi compile, *Dagger* sẽ báo lỗi rằng:"`repository` không được provide nên không biết khởi tạo thế nào!"
@@ -142,7 +142,10 @@ class UserActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ...
 
+        // initialize the component
         val userComponent = DaggerUserComponent.create()
+
+        // ... and get the dependency
         mUserPresenter = userComponent.userPresenter()
     }
 }
@@ -204,7 +207,7 @@ fun provideUserServices(retrofit: Retrofit): UserServices {
 
 **Note**: Tên của các provide function và thứ tự của các function đó trong module không quan trọng mà quan trọng là kiểu trả về của các function đó, *Dagger* sẽ dựa vào đó mà thêm các class vào *dependency graph*. Trong trường hợp trên: để provide `UserServices`, chúng ta cần một object `Retrofit`. Bởi vậy, ta sẽ provide cho *Dagger* `Retrofit`. Để khởi tạo `Retrofit`, chúng ta lại cần có một `String` và một object `Gson`. Vì thế, chúng ta tiếp tục provide cho *Dagger* cả `Gson` và `String`. Bởi vậy, miễn là ta satisfy các dependency đầy đủ là được.
 
-Ngoài ra, *Dagger* cho phép chúng ta gắn nhiều module vào một component giúp cho các module đó lại được thông với nhau nên dependency cung cấp ở module này có thể provide cho dependency ở module kia. Bởi vậy, các bạn nên nhóm các dependency liên quan vào một module để code không bị lặp. VD: `UtilsModule`
+Ngoài ra, *Dagger* cho phép chúng ta gắn nhiều module vào một component giúp cho các module đó được thông với nhau nên dependency cung cấp ở module này có thể provide cho dependency ở module kia. Bởi vậy, các bạn nên nhóm các dependency liên quan vào một module để code không bị lặp. VD: `UtilsModule`
 ```
 @Module
 class UtilsModule {
@@ -238,7 +241,7 @@ object ApiModule { ... }
 
 ##### @Bind
 
-Quay lại với quả [bát họ kỹ thuật](https://buihuycuong.medium.com/technical-debt-n%E1%BB%A3-k%E1%BB%B9-thu%E1%BA%ADt-6a312eb5eb42) đã bốc từ đầu bài viết khi chúng ta chỉ sử dụng concrete type và từ chối abstract type nhằm giảm độ phức tạp của chương trình. Và vui mừng là chúng ta đã có "the right tool" để giải quyết vấn đề rồi. It's payback time!
+Quay lại với quả [bát họ kỹ thuật](https://buihuycuong.medium.com/technical-debt-n%E1%BB%A3-k%E1%BB%B9-thu%E1%BA%ADt-6a312eb5eb42) đã bốc từ đầu bài viết khi chúng ta chỉ sử dụng concrete type và từ chối abstract type nhằm giảm độ phức tạp của chương trình. Và vui mừng là chúng ta đã có đủ kiến thức để giải quyết vấn đề rồi. It's payback time!
 
 Chúng ta sẽ tạo thêm các interface và sử dụng các interface đấy thay vì các concrete class:
 ```
@@ -251,7 +254,7 @@ class UserRepositoryImpl @Inject constructor(var apiHelper: ApiHelper,
                                              var dbHelper: DbHelper) : UserRepository { ... }
 ```
 
-Vậy là giờ đây, các dependency là các interface thay vì các class có thể khởi tạo được nên bắt buộc chúng ta phải provide chúng thông qua các module
+Vậy là giờ đây, các dependency là các interface thay vì các class có thể khởi tạo được nên bắt buộc chúng ta phải provide chúng thông qua các module:
 ```
 @Module
 object PresenterModule {
@@ -276,7 +279,7 @@ object RepositoryModule {
 
 **Note**: Các dependency còn lại như `ApiHelper`, `PreferenceHelper` và `DbHelper` thì các bạn làm tương tự nhé: `ctrl-c`, `ctrl-vvvvvvvv` :D
 
-Các bạn có thể thấy cách khai báo các dependency này là hoàn toàn giống nhau khi chúng ta provide một interface và trả về implementation của interface đó. Đây có thể coi là một đoạn code lặp mà chúng ta thì ngày càng lười :D. Bởi vậy, *Dagger*  lại phải cung cấp thêm một annotation nữa cho chúng ta: `@Bind`
+Các bạn có thể thấy cách khai báo các dependency này là hoàn toàn giống nhau về format khi chúng ta provide một interface nhưng lại trả về implementation của interface đó. Trong thực tế, cách provide này là cực kỳ phổ biến khi hầu như bất kỳ ứng dụng nào sử dụng *Dagger 2* đều sẽ có những provide function như thế. Bởi vậy, *Dagger* cung cấp cho chúng ta một annotation để giảm những đoạn boilerplate code này đi: `@Binds`
 ```
 @Module
 abstract class PresenterModule {
@@ -293,7 +296,19 @@ abstract class RepositoryModule {
 }
 ```
 
-**Note**: Các binding function cần phải nằm trong một abstract class module và module này không được chứa lẫn lộn cả binding function và provides function. Đó là vì *Dagger* sử dụng thông tin có được từ 2 annotation này là khác nhau để khởi tạo dependency. Để hiểu kỹ hơn, các bạn có thể tham khảo [ở đây](https://dagger.dev/dev-guide/faq.html#why-is-binds-different-from-provides).
+**Note**: Các binding function cần phải nằm trong một abstract class module và module này không được chứa lẫn lộn cả binding function và provides function. Đó là vì cách *Dagger* sử dụng thông tin có được từ 2 annotation này để khởi tạo dependency là khác nhau:
+- Với `@Provides`, *Dagger* sẽ sử dụng chính function chúng ta khai báo để khởi tạo dependency. Màu vàng ở tên function thể hiện *Dagger* đang sử dụng function:
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/d5kcmruvnu_module_provides_function.png">
+</p>
+
+- Với `@Binds`, *Dagger* chỉ lấy thông tin của function: kiểu trả về và kiểu của tham số truyền vào thay vì dùng luôn function. Màu ghi ở tên function thể hiện function đang không được sử dụng ở đâu:
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/fvba9w8xwb_module_binds_function.png">
+</p>
+
+
+Để hiểu kỹ hơn, các bạn có thể tham khảo [ở đây](https://dagger.dev/dev-guide/faq.html#why-is-binds-different-from-provides).
 
 ### @Qualifier
 
@@ -327,11 +342,7 @@ fun provideRetrofitAuthentication(baseUrl: String, okHttpClient: OkHttpClient, g
 }
 
 @Provides
-fun provideOkHttp(): OkHttpClient {
-    return OkHttpClient.Builder()
-        .authenticator(TokenAuthenticator())
-        .build()
-}
+fun provideOkHttp(): OkHttpClient { ... }
 ```
 
 Cùng với đó, ở tất cả những chỗ sử dụng `Retrofit` cũng cần sử dụng `@Named` để chỉ rõ dependency cần dùng là loại nào
@@ -357,7 +368,7 @@ annotation class AuthenticationRetrofit()
 annotation class NoAuthenticationRetrofit()
 ```
 
-Cách sử dụng thì sẽ tương tự như `@Named`
+Cách sử dụng annotation mới này chỉ đơn giản là chúng ta thay thế `@Named` bằng annotation mới:
 ```
 @Provides
 @AuthenticationRetrofit
@@ -371,12 +382,41 @@ fun provideRetrofitAuthentication(baseUrl: String, okHttpClient: OkHttpClient, g
 fun provideUserServices(@NoAuthenticationRetrofit retrofit: Retrofit): UserServices { ... }
 ```
 
+### Property injection
+
+Trong phần I của series, chúng ta biết có [3 cách để inject](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles#toc-c-c-ki-u-inject) một dependency. Tuy nhiên từ đầu bài viết, chúng ta mới chỉ sử dụng 1 cách inject duy nhất. Đó là *constructor injection*. Cách inject này không thể sử dụng đối với những class mà chúng ta không thể can thiệp vào quá trình khởi tạo: `Activity`, `Fragment`, `Service`, etc. Ngoài ra, cách lấy dependency từ *Dagger component* ra còn một vấn đề là khi số lượng dependency tăng lên, chúng ta cũng phải nhớ mà lấy ra đầy đủ trước khi sử dụng để tránh làm chương trình crash. Để giải quyết điều này, chúng ta sẽ sử dụng đến một cách inject khác: *property injection*.
+
+Đầu tiên, chúng ta cần annotate dependency bằng `@Inject` và public dependency để component có thể gán giá trị cho dependency:
+```
+@Inject
+lateinit var mUserPresenter: UserPresenter
+```
+
+Tiếp đó, chúng ta cần khai báo thêm một function vào component để *Dagger* biết chúng ta muốn inject dependency vào class nào:
+```
+@Component
+interface UserComponent {
+    fun inject(userActivity: UserActivity)
+}
+```
+
+**Note**: Khác với function để get dependency từ *Dagger component* ra, function để inject dependency không được trả về giá trị gì.
+
+Cuối cùng, thay vì lấy dependency ra từ component, chúng ta gọi function vừa được khai báo trong component kia để inject tất cả các dependency có  annotation `@Inject`:
+```
+// initialize the component
+val userComponent = DaggerUserComponent.create()
+
+// inject dependencies to this class
+userComponent.inject(this)
+```
+
+### Cùng nhìn lại
+
 Cuối cùng, sau khi đã hoàn thành việc khai báo các dependency không mấy khó khăn, phần việc nhàm chán còn lại là khởi tạo và quản lý các dependency, *Dagger* sẽ lo hết cho chúng ta. Diagram dưới đây sẽ thể hiển mối quan hệ giữa các thành phần trong *Dagger*:
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/4w1wm4uy48_Dagger2_component.jpg">
 </p>
 
----
-
-Gòi xong, hy vọng với những kiến thức nhiêu đây, bạn đã có thể bắt đầu và không thấy nản với *Dagger 2* nữa. Tuy chương trình trên đây chỉ là một chương trình nhỏ, chúng ta có thể sẽ chưa thấy hết được sức mạnh của *Dagger 2* khi các dependency là chưa nhiều. Tuy nhiên, với một ứng dụng phức tạp hơn với nhiều màn hình hơn, mỗi màn hình sẽ sử dụng một loạt các dependency kèm theo thì việc khởi tạo và quản lý sẽ rất mất thời gian khi phải viết rất nhiều những đoạn code lặp và còn dễ gây ra lỗi nữa. *Dagger 2* chính là "the right tool" giúp chúng ta loại bỏ mốí quan tâm đấy và tập trung vào các phần quan trọng hơn của chương trình.
+Gòi xong, chúng ta đã đi qua hầu hết các kiến thức cơ bản của *Dagger 2*, hy vọng với những kiến thức nhiêu đây, bạn đã có thể bắt đầu sử dụng *Dagger 2* mà không cảm thấy lạc lối nữa. Tuy chương trình trên đây chỉ là một chương trình nhỏ, chúng ta có thể sẽ chưa thấy hết được sức mạnh của *Dagger 2* khi các dependency là chưa nhiều. Tuy nhiên, với một ứng dụng phức tạp hơn với nhiều màn hình hơn, mỗi màn hình sẽ sử dụng một loạt các dependency kèm theo thì việc khởi tạo và quản lý sẽ rất mất thời gian khi phải viết rất nhiều những đoạn boilerplate code và còn dễ gây ra lỗi nữa. *Dagger 2* chính là "the right tool" giúp chúng ta loại bỏ mốí quan tâm đấy và tập trung vào các phần quan trọng hơn của chương trình.

@@ -1,17 +1,17 @@
-[Android] Dagger 2 - Phần I: Các khái niệm cơ bản
+[Android] Dagger 2 - Phần I: Basic principles
 
 Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ ([AndroidWeekly](https://androidweekly.net/) là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: *Inversion of control*, *Dependency inversion*, *Dependency injection* (DI) và một library thường được sử dụng để implement *DI* trong Android: [Dagger2](https://google.github.io/dagger/). Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng *DI* có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy & paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về *DI* mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với *DI* trong Android.
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg">
-  An awaiting adventure...<br>Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 </p>
 
 # Các bài học để lên lớp
 
-1. [Android] Dagger 2 - Phần I: Các khái niệm cơ bản (Bạn đang ở đây)
-2. [[Android] Dagger 2 - Phần II: Into the Dagger 2]()
-3. [[Android] Dagger 2 - Phần III: Custom scope trong dagger 2]()
+1. [Android] Dagger 2 - Phần I: Basic principles
+2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
+3. [[Android] Dagger 2 - Phần III: The time of our dependencies]()
 
 # Kiến thức đầu vào
 
@@ -208,11 +208,11 @@ Như chúng ta thấy, *injector class* khởi tạo *service class* và inject 
 * Property injection: *injector class* inject *service class* trực tiếp vào một public property của *client class*
 * Method injection: *client class* sẽ implement một interface chứa một method để cung cấp dependency và *injector class* sẽ sử dụng interface này để cung cấp *service class* cho *client class*.
 
-Chúng ta sẽ tiếp tục nâng cấp ví dụ ban đầu để làm ví dụ cho từng kiểu inject
+Chúng ta sẽ tiếp tục nâng cấp ví dụ ban đầu để làm ví dụ cho từng kiểu inject.
 
 ##### Constructor injection
 
-Chúng ta sẽ thêm một constructor cho `Student` để *injector class* có thể inject `TextBook` vào như sau:
+*Injector class* sẽ inject `TextBook` vào `Student` thông qua một constructor. Bởi vậy, ta cần một constructor có tham số là `TextBook`:
 ```
 class Student {
 
@@ -233,11 +233,11 @@ class Student {
 }
 ```
 
-Đối với kiểu inject này, khi có chỗ nào cần một đối tượng `Student`, một đối tượng mới sẽ được khởi tạo và một đối tượng `TextBook` cũng được khởi tạo và truyền vào `Student`.
+Đối với kiểu inject này, một đối tượng `TextBook` phải được khởi tạo trước để làm "nguyên liệu" cho việc khởi tạo `Student`.
 
 ##### Property injection
 
-Đối với *property injection*, ta cần để access modifier của property muốn được inject thành *public* bởi cách inject này thực chất là *injector class* sẽ inject *service class* trực tiếp bằng cách gán giá trị.
+Khi sử dụng *property injection*, access modifier của property muốn được inject không được là *private* bởi *injector class* sẽ gán trực tiếp *service class* vào *client class*:
 ```
 class Student {
 
@@ -264,11 +264,9 @@ object Injector {
 }
 ```
 
-Ở đây, khi khởi tạo `Student` (hoặc một một lúc nào khác mà chúng ta muốn), chúng ta sẽ yêu cầu `Injector` cung cấp dependency cho `Student`, và *Injector* sẽ thỏa mãn chúng ta.
-
 ##### Method injection
 
-Để inject bằng *method injection*, *client class* cần có một setter method để *injector class* truyền *service class* vào *client class*
+Cách inject cuối cùng là *method injection* khi *injector class* inject *service class* vào *client class* thông qua một setter method.
 ```
 class Student {
 
@@ -284,9 +282,7 @@ class Student {
 }
 ```
 
-Với kiểu inject này, sẽ được inject thông qua function `setTextBook()` tại mộ thời điểm nào đó.
-
----
+### Cùng nhìn lại
 
 Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi ở tuổi 18...
 

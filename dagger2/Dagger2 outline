@@ -1,4 +1,4 @@
-1. Part I - Các khái niệm cơ bản
+1. Part I - Basic principles
 - What is Dependency?
 - Disadvantage of hard dependency:
   + Hard dependencies reduce the reusability
@@ -25,7 +25,7 @@
 - The very first basic program with @Inject, @Compoment, @Module, @Provides, @Bind, @Qualifier
 - Field injection
 
-3. Part III -
+3. Part III - The time of our dependencies
 - @Scope
 - Dependency component vs sub-component
 - Optional:

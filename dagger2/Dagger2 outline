@@ -43,6 +43,10 @@
 - https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 - https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-scopes-3dfd032ccd82
 - https://guides.codepath.com/android/dependency-injection-with-dagger-2
+- https://academy.realm.io/posts/daniel-lew-dependency-injection-dagger/
+- Subcomponent or component dependency:
+  + https://github.com/google/dagger/issues/1364
+  + https://proandroiddev.com/dagger-2-component-relationships-custom-scopes-8d7e05e70a37
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 - Note:
   + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!

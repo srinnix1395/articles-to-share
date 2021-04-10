@@ -218,7 +218,7 @@ Ngoài ra, *Dagger* cho phép chúng ta gắn nhiều module vào một componen
 @Module
 class UtilsModule {
 
-    private lateinit var mContext: Context
+    private var mContext: Context
 
     constructor(context: Context) {
         this.mContext = context
@@ -408,7 +408,15 @@ interface MainComponent {
 }
 ```
 
-**Note**: Khác với function để lấy dependency trực tiếp từ *Dagger component* ra, function để inject dependency không được trả về giá trị gì.
+**Note**: Đến đây, chúng ta thấy sẽ có 2 cách để giao tiếp với *dependency graph*:
+- Khai báo một function không có tham số và trả về một class mà bạn muốn trực tiếp lấy ra.
+```
+fun mainPresenter(): MainPresenter
+```
+- Khai báo một function không trả về giá trị nào và có một tham số là class mà bạn muốn inject các dependecy bằng *property injection*
+```
+fun inject(mainActivity: MainActivity)
+```
 
 Cuối cùng, thay vì lấy dependency ra từ component, chúng ta gọi function vừa được khai báo trong component kia để *Dagger* inject tất cả các dependency mà đã được annotate với `@Inject`:
 ```

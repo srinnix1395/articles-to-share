@@ -232,7 +232,7 @@ class MainActivity : FragmentActivity() {
 }
 ```
 
-Tuy nhiên, nếu gắn vòng đời `ApplicationComponent` vào `MyApplication`, những class như `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository` sẽ tồn tại trong toàn bộ application thay vì sẽ được tạo mới mỗi khi một màn hình mới được mở lên. Để giải quyết vấn đề này, *Dagger* cho phép định nghĩa nhiều hơn một component (hay *dependency graph*) duy nhất. Chúng ta có thể chia `ApplicationComponent` thành các component nhỏ hơn để đóng gói các dependency có những điểm chung thành một component riêng. Các component nhỏ hơn này cũng sẽ có những scope riêng, đáp ứng đủ mọi loại yêu cầu về vòng đời của chúng ta.
+Tuy nhiên, nếu gắn vòng đời `ApplicationComponent` vào `MyApplication`, những class như `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository` sẽ tồn tại trong toàn bộ application thay vì sẽ được tạo mới mỗi khi một màn hình mới được mở lên. Để giải quyết vấn đề này, *Dagger* cho phép định nghĩa nhiều hơn một component (hay *dependency graph*) duy nhất. Chúng ta có thể chia `ApplicationComponent` thành các component nhỏ hơn để đóng gói các dependency có những điểm chung thành một component riêng. Các component nhỏ hơn này cũng sẽ có những scope riêng, đáp ứng những yêu cầu về vòng đời khác nhau của các dependency.
 
 Trước khi bắt tay vào implement scope, chúng ta sẽ làm ứng dụng của chúng ta phức tạp hơn để thấy rõ hơn sức mạnh của *Dagger*.
 

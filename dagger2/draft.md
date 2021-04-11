@@ -20,3 +20,7 @@ Note: If you're already familiar with Dagger, check out these best practices. If
         Use @Provides to tell Dagger how to provide classes that your project doesn't own.
     You should only declare modules once in a component.
     Name the scope annotations depending on the lifetime where the annotation is used. Examples include @ApplicationScope, @LoggedUserScope, and @ActivityScope.
+
+    368.454.985
+    23.230.185
+    24.230.836

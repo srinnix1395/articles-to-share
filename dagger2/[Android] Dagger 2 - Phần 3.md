@@ -232,22 +232,31 @@ class MainActivity : FragmentActivity() {
 }
 ```
 
-Tuy nhiên, nếu gắn vòng đời `ApplicationComponent` vào `MyApplication`, những class như `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository` sẽ tồn tại trong toàn bộ application thay vì sẽ được tạo mới mỗi khi một màn hình mới được mở lên. Để giải quyết vấn đề này, *Dagger* cho phép định nghĩa nhiều hơn một component (hay *dependency graph*) duy nhất. Chúng ta có thể chia `ApplicationComponent` thành các component nhỏ hơn để đóng gói các dependency có những điểm chung thành một component riêng. Các component nhỏ hơn này cũng sẽ có những scope riêng, đáp ứng những yêu cầu về vòng đời khác nhau của các dependency.
+Tuy nhiên, nếu gắn vòng đời `ApplicationComponent` vào `MyApplication`, những class như `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository` sẽ tiếp tục tồn tại trong memory ngay cả sau khi các màn hình `MainActivity` và `LoginActivity` đóng. Thay vào đó, chúng ta muốn các instance sẽ được tạo mới mỗi khi một màn hình mới được mở lên. Để giải quyết vấn đề này, *Dagger* cho phép định nghĩa nhiều hơn một component (hay *dependency graph*) duy nhất. Chúng ta có thể chia `ApplicationComponent` thành các component nhỏ hơn để đóng gói các dependency có những điểm chung thành một component riêng. Các component nhỏ hơn này cũng sẽ có những scope riêng, đáp ứng đủ mọi loại yêu cầu về vòng đời của chúng ta.
 
-Trước khi bắt tay vào implement scope, chúng ta sẽ làm ứng dụng của chúng ta phức tạp hơn để thấy rõ hơn sức mạnh của *Dagger*.
+Trước khi bắt tay vào implement scope, chúng ta sẽ tăng độ khó cho game để thấy rõ hơn sức mạnh của *Dagger*. Chương trình bây giờ sẽ gồm 3 màn hình như sau:
 
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/bew7c60zs3_Screenshot%20from%202021-04-12%2017-11-01.png">
+</p>
 
+Flow của app sẽ như sau:
+- Ở màn hình `LoginActivity`, user sẽ nhập username và password để login
+- Sau khi login thành công, màn `MainActivity` sẽ mở lên và hiển thị số thông báo chưa đọc
+- Nếu user click vào button Settings, màn `SettingsActivity` sẽ mở lên. Ở đây, chúng ta có:
+  + Button Refresh để mô tả việc refresh và lấy về số notification chưa đọc và hiển thị lên.
+  + Button Logout để logout user và trở về màn `LoginActivity`
+- Khi quay về màn `MainActivity`, số notification chưa đọc ở đây được update tương ứng với màn `SettingsActivity`.
 
+Ngoài ra, phần data của app sẽ có thêm một sự thay đổi là chúng ta sẽ có thêm một class `UserManager` là một dạng memory cache, giữ thông tin của user sau khi user đăng nhập thành công. Và chúng ta sẽ lưu số notification chưa đọc tại đây.
 
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p6w8tr7sjn_DaggerScope.jpg">
+</p>
 
-
-
-
-
-
-
-Với project hiện tại, trước khi bắt tay vào implement, chúng ta sẽ chia lại các dependency vào 2 nhóm như sau:
+Với requrirement như trên, chúng ta có thể chia các dependency vào 3 nhóm như sau với vòng đời tương ứng như sau:
 1. Nhóm application: những class chúng ta chỉ muốn tạo một lần và sẽ được tái sử dụng trong suốt ứng dụng. Đó là `Context`(Application context), `ApiHelper`, `PreferenceHelper` và `DbHelper`
+2. Nhóm user info: những class sẽ tồn tại khi user login thành công và chỉ bị hủy khi user logout.
 2. Nhóm activity: những class sẽ được khởi tạo khi màn hình được mở lên và hủy khi màn hình đóng: `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository`...
 
 Vòng đời của hai nhóm này được mô hình hóa rõ hơn biểu đó dưới đây:

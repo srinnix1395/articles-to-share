@@ -11,7 +11,8 @@ Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực t�
 
 1. [Android] Dagger 2 - Phần I: Basic principles
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
-3. [[Android] Dagger 2 - Phần III: The time of our dependencies]()
+3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies]()
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
 
 # Kiến thức đầu vào
 

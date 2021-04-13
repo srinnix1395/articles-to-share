@@ -1,4 +1,4 @@
-[Android] Dagger 2 - Phần III: The time of our dependencies
+[Android] Dagger 2 - Phần III - 1: The time of our dependencies
 
 Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger 2*. Nếu bạn chưa đọc các phần trước, bạn có thể ghi danh vào lớp học [tại đây](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 
@@ -6,7 +6,8 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 
 1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
-3. [Android] Dagger 2 - Phần III: The time of our dependencies
+3. [Android] Dagger 2 - Phần III - 1: The time of our dependencies
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
 
 # Trong bài học trước...
 
@@ -199,7 +200,7 @@ Chúng ta thấy rằng `dbHelperProvider` sẽ được khởi tạo một lầ
 
 **Note:** Khi sử dụng `@Singleton`, cái tên này dễ làm chúng ta nhớ đến design pattern *Singleton*. Điều này có thể gây hiểu nhầm rằng cứ sử dụng annotation này thì các dependency sẽ "sống" cho đến mãn kiếp của chương trình. Tuy nhiên, cần phải nhấn mạnh rằng, đây chỉ là một cái tên, ý nghĩa của tên không giúp *Dagger* hiểu được vòng đời của dependency là gì. *Dagger* chỉ đơn giản dùng tên scope để quyết định xem: có nên provide một instance duy nhất (component có scope **trùng** với dependency) hay nên tạo ra thêm instance (component có scope **khác** với dependency).
 
-Tuy nhiên, việc chỉ khởi tạo duy nhất 1 instance chỉ có tác dụng khi ta sử dụng chung component. Tức là nếu chúng ta khởi tạo 2 component ở 2 nơi (VD: `LoginActivity` và `MainActivity`), chúng ta sẽ có 2 bộ dependency khác nhau. Bởi vậy, chúng ta cần khởi tạo và keep component ở một chỗ khác, nơi có vòng đời bao trùm lên các Activity, thì khi dù cho các Activity được tạo ra hoặc chết đi, các dependency mong muốn vẫn sẽ tồn tại độc lập. Với *Android*, một chỗ phù hợp để keep các *global singleton dependency* kiểu này là `Application`. Cùng với việc chuyển đoạn code khai báo và khởi tạo component sang `Application`, chúng ta sẽ đổi tên component thành `ApplicationComponent` để thông tin về component được mô tả rõ hơn.
+Tuy nhiên, việc chỉ khởi tạo duy nhất 1 instance chỉ có tác dụng khi ta sử dụng chung component. Tức là nếu chúng ta khởi tạo 2 component ở 2 nơi (VD: `LoginActivity` và `MainActivity`), chúng ta vẫn sẽ có 2 bộ dependency khác nhau. Bởi vậy, chúng ta cần khởi tạo và keep component ở một chỗ khác, nơi có vòng đời bao trùm lên các Activity, thì khi dù cho các Activity được tạo ra hoặc chết đi, các dependency mong muốn vẫn sẽ tồn tại độc lập. Với *Android*, một chỗ phù hợp để keep các *global singleton dependency* kiểu này là `Application`. Cùng với việc chuyển đoạn code khai báo và khởi tạo component sang `Application`, chúng ta sẽ đổi tên component thành `ApplicationComponent` để đúng với context hiện tại hơn.
 ```
 class MyApplication : Application() {
 
@@ -234,7 +235,9 @@ class MainActivity : FragmentActivity() {
 
 Tuy nhiên, nếu gắn vòng đời `ApplicationComponent` vào `MyApplication`, những class như `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository` sẽ tiếp tục tồn tại trong memory ngay cả sau khi các màn hình `MainActivity` và `LoginActivity` đóng. Thay vào đó, chúng ta muốn các instance sẽ được tạo mới mỗi khi một màn hình mới được mở lên. Để giải quyết vấn đề này, *Dagger* cho phép định nghĩa nhiều hơn một component (hay *dependency graph*) duy nhất. Chúng ta có thể chia `ApplicationComponent` thành các component nhỏ hơn để đóng gói các dependency có những điểm chung thành một component riêng. Các component nhỏ hơn này cũng sẽ có những scope riêng, đáp ứng đủ mọi loại yêu cầu về vòng đời của chúng ta.
 
-Trước khi bắt tay vào implement scope, chúng ta sẽ tăng độ khó cho game để thấy rõ hơn sức mạnh của *Dagger*. Chương trình bây giờ sẽ gồm 3 màn hình như sau:
+### The very first "teenager" program
+
+Trước khi bắt tay vào implement scope, chúng ta sẽ tăng độ khó cho game để thấy rõ hơn sức mạnh của *Dagger*. Chương trình bây giờ sẽ gồm 4 màn hình như sau:
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/bew7c60zs3_Screenshot%20from%202021-04-12%2017-11-01.png">
@@ -248,15 +251,103 @@ Flow của app sẽ như sau:
   + Button Logout để logout user và trở về màn `LoginActivity`
 - Khi quay về màn `MainActivity`, số notification chưa đọc ở đây được update tương ứng với màn `SettingsActivity`.
 
-Ngoài ra, phần data của app sẽ có thêm một sự thay đổi là chúng ta sẽ có thêm một class `UserManager` là một dạng memory cache, giữ thông tin của user sau khi user đăng nhập thành công. Và chúng ta sẽ lưu số notification chưa đọc tại đây.
+Ngoài ra, phần data của app sẽ có thêm một sự thay đổi khi chúng ta sẽ có thêm một class `UserManager` như một dạng memory cache, giữ thông tin của user (`LoggedUserInfo`) sau khi đăng nhập thành công.
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p6w8tr7sjn_DaggerScope.jpg">
 </p>
 
 Với requrirement như trên, chúng ta có thể chia các dependency vào 3 nhóm như sau với vòng đời tương ứng như sau:
-1. Nhóm application: những class chúng ta chỉ muốn tạo một lần và sẽ được tái sử dụng trong suốt ứng dụng. Đó là `Context`(Application context), `ApiHelper`, `PreferenceHelper` và `DbHelper`
-2. Nhóm user info: những class sẽ tồn tại khi user login thành công và chỉ bị hủy khi user logout.
+1. Nhóm application: những class chúng ta chỉ muốn tạo một lần và sẽ được tái sử dụng trong suốt ứng dụng. Đó là `Context`(Application context), `ApiHelper`, `PreferenceHelper`, `DbHelper` và `UernManager`
+2. Nhóm user info: những class sẽ tồn tại khi user login thành công và chỉ bị hủy khi user logout. VD: `LoggedUserInfo` nằm trong `UserManager`
 2. Nhóm activity: những class sẽ được khởi tạo khi màn hình được mở lên và hủy khi màn hình đóng: `MainPresenter`, `MainRepository`, `LoginPresenter`, `LoginRepository`...
 
-Vòng đời của hai nhóm này được mô hình hóa rõ hơn biểu đó dưới đây:
+Vòng đời của ba nhóm này được mô hình hóa rõ hơn ở biểu đó dưới đây:
+
+<p align="center">
+  <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/m8o540amyn_application_lifecycle.jpg">
+</p>
+
+**Note:** `UserManager` sẽ "sống" trong suốt chương trình nhưng `LoggedUserInfo` chỉ có mặt sau khi user đã login thành công.
+
+Từ mô hình về application lifecycle ở trên, chúng ta sẽ tạo ra thêm 2 component để quản lý các dependency với vòng đời tương ứng: `UserComponent` và `ActivityComponent`
+
+##### UserComponent
+
+`UserComponent` sẽ được khởi tạo sau khi đăng nhập thành công và sẽ tiếp tục tồn tại cho đến khi đóng chương trình hoặc user logout. Vì vậy, trách nhiệm quản lý dependency cho các màn hình xuất hiện sau khi login thành công (`MainActivity` và `SettingsActivity`) nên là của `UserComponent` thay vì `ApplicationComponent` vì nó thể hiện đúng hơn vòng đời của các dependency. Ngoài ra, việc này giúp giảm tải cho `ApplicationComponent`, làm code được module hóa và dễ đọc hơn.
+```
+@Component
+interface UserComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+    fun inject(settingsActivity: SettingsActivity)
+}
+```
+
+Cùng với `UserComponent`, chúng ta cần tạo thêm một *scope annotation* tương ứng để:
+- Phân biệt giữa các component dễ dàng hơn bởi *scope annotation* sẽ thể hiện phạm vi của component
+- Sử dụng với những dependency mà chúng ta muốn nó chỉ có 1 instance duy nhất trong suốt vòng đời của component.
+
+Annotation tương ứng với `UserComponent` sẽ là `@LoggedUserScope`:
+```
+@Scope
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+annotation class LoggedUserScope
+```
+
+**Note:** Về việc tạo *scope annotation*, chúng ta có thể copy `@Singleton` và đổi tên là xong.
+
+Sau khi khai báo component, chúng ta cần xác định việc nên giữ component ở đâu, khởi tạo và giải phóng component lúc nào để đảm bảo rằng các dependency mà component đó quản lý sẽ có vòng đời đúng như chúng ta mong muốn. Với `UserComponent`, câu trả lời cho 3 câu hỏi vừa rồi là:
+- Lưu `UserComponent` ở đâu? Không thể lưu ở Activity vì khi Activity "đứt" thì `UserComponent` cũng "đứt" theo. Bởi vậy, chúng ta cần lưu ở một chỗ nào có vòng đời bao trùm các Activity. `Application` thì sao? Về mặt kỹ thuật thì hoàn toàn được, object này rõ ràng là đáp ứng được yêu cầu của chúng ta khi sẽ sống đủ lâu. Tuy nhiên, việc lưu `UserComponent` vào `Application` không hợp lý lắm về mặt cấu trúc vì `UserComponent` sẽ quản lý những dependency liên quan đến user cơ. Bởi vậy, một class đã có sẵn khác đáp ứng được cả 2 yêu cầu trên là `UserManager`
+```
+@Singleton
+class UserManager @Inject constructor() {
+
+  var userComponent: UserComponent? = null
+
+  fun isUserLoggedIn() = userComponent != null
+}
+```
+
+- Khởi tạo và giải phóng `UserComponent` lúc nào? Chúng ta cần `UserComponent` để inject ở các màn hình sau khi đăng nhập thành công và sẽ không cần `UserComponent` nữa khi logout. Bởi vậy, chúng ta sẽ tạo ra 2 method bên trong `UserManager` để khởi tạo và giải phóng `UserComponent`
+```
+fun login(username: String, password: String): Boolean {
+    initUserComponent(username)
+    return true
+}
+fun logout() {
+    userComponent = null
+}
+private fun initUserComponent(userName: String) {
+    userComponent =  DaggerUserComponent.builder().build()
+}
+```
+
+##### ActivityComponent
+
+Dựa vào tên của component, chúng ta có thể đoán ra component này sẽ gắn đời mình với các activity: activity được mở lên thì component cũng được khởi tạo còn khi activity bị hủy thì component cũng được giải phóng theo. Các activity nằm dưới trách nhiệm của `ActivityComponent` là `LoginActivity`.
+```
+@Component
+interface ActivityComponent {
+
+    fun inject(loginActivity: LoginActivity)
+}
+```
+
+Annotation tương ứng sẽ là `@ActivityScope`
+```
+@Scope
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+annotation class ActivityScope
+```
+
+Tương tự như với `UserComponent`, chúng ta phải trả lời 3 câu hỏi: lưu ở đâu, khởi tạo và giải phóng lúc nào. Tuy nhiên, vì component này được gắn vào các Activity nên 3 vấn đề kia cũng trở nên dễ dàng hơn. Cụ thể là
+- Chúng ta sẽ lưu `ActivityComponent` ở chính các Activity. Lưu ý: Mỗi activity sẽ có một component riêng để với mỗi màn hình, chúng ta cũng sẽ có một bộ dependency riêng.
+- Chúng ta sẽ khởi tạo component ở `onCreate()` và có thể bỏ qua khoản giải phóng vì khi Activity đóng thì component cũng sẽ được giải phóng theo.
+
+### Cùng nhìn lại
+
+Vậy là khi chương trình "trưởng thành" hơn với những yêu cầu về vòng đời của các dependency phức tạp hơn, chúng ta đã chia nhỏ "god component" ban đầu ra thành các component nhỏ hơn để quản lý các dependency được chính xác hơn. Tuy nhiên, chương trình của chúng ta vẫn chưa thể chạy vì khi đã chia các component ra, chúng ta cần giải quyết thêm vấn đề giao tiếp giữa các component để đến cuối cùng, một *dependency graph* của cả chương trình vẫn được vẽ ra dựa trên sự kết hợp hài hòa của các *dependency graph* nhỏ hơn. Phần tiếp theo của series sẽ hoàn thành bức tranh lớn ấy.

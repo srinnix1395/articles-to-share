@@ -6,7 +6,8 @@ Bài viết là phần thứ II của series bài học vỡ lòng về *Dagger 
 
 1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 2. [Android] Dagger 2 - Phần II: Into the Dagger 2
-3. [[Android] Dagger 2 - Phần III: The time of our dependencies]()
+3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies]()
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
 
 # Trong bài học trước...
 

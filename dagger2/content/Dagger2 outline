@@ -25,8 +25,10 @@
 - The very first basic program with @Inject, @Compoment, @Module, @Provides, @Bind, @Qualifier
 - Field injection
 
-3. Part III - The time of our dependencies
+3. Part III - 1: The time of our dependencies
 - @Scope
+
+4. Part III - 2: The time of our dependencies
 - Dependency component vs sub-component
 - Optional:
   + Global singleton and Local singleton
@@ -35,20 +37,27 @@
     . file Module
     . file Component
 
+5. Part IV - A new horizon
+- Parts which series haven't covered
+- Dagger annotation cheat sheet.
+
+6. Part V - Hilt migration guide.
+- annotation cheat sheet
+- 
+
 #Reference
 - IOC, DIP, DI: https://www.tutorialsteacher.com/ioc/introduction
 - https://developer.android.com/training/dependency-injection/dagger-android
-- https://www.vogella.com/tutorials/Dagger/article.html
 - https://m.facebook.com/groups/laptrinh.android/permalink/2302990506416007/
 - https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 - https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-scopes-3dfd032ccd82
-- https://guides.codepath.com/android/dependency-injection-with-dagger-2
 - https://academy.realm.io/posts/daniel-lew-dependency-injection-dagger/
 - Subcomponent or component dependency:
   + https://github.com/google/dagger/issues/1364
   + https://proandroiddev.com/dagger-2-component-relationships-custom-scopes-8d7e05e70a37
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-- Note:
-  + Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!
-  + Dagger 1 uses Java reflection to achieve DI, therefore it's slow and it used to perform dependency resolution at RUN-TIME
-  + Dagger 2 uses Generating code to achieve DI, it used perform dependency resolution at COMPILE-TIME
+- Cheat sheet: https://developer.android.com/training/dependency-injection/hilt-cheatsheet
+
+#Note:
+  - Since Dagger 2 is operated with the code generation but not with the reflection you always have to set concrete types (no abstractions or generics)!
+  - Dagger 1 uses Java reflection to achieve DI, therefore it's slow and it used to perform dependency resolution at RUN-TIME
+  - Dagger 2 uses Generating code to achieve DI, it used perform dependency resolution at COMPILE-TIME

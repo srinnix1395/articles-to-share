@@ -14,7 +14,7 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 Chúng ta đã tìm hiểu cách "mô hình hóa" các mối quan hệ giữa class và các dependency thông qua *dependency graph*. Tiếp đó, chúng ta xây dựng một ứng dụng đơn giản và từng bước áp dụng những annotation cơ bản trong *Dagger 2* để khởi tạo các dependency.
 
 # Đi vào bài học hôm nay...
-Chương trình ở phần II sẽ tiếp tục scale up lên với thêm nhiều màn hình và chức năng. Khi đó, chúng ta cũng sẽ đối mặt với vấn đề quản lý vòng đời của các dependency.
+Chương trình ở phần III này sẽ tiếp tục scale up lên với thêm nhiều màn hình và chức năng. Khi đó, chúng ta sẽ phải đối mặt với những vấn đề mới trong việc quản lý vòng đời của các dependency.
 
 <p align="center">
   <img src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/lb2kry1ck4_john-towner-3Kv48NS4WUU-unsplash.jpg">
@@ -78,7 +78,7 @@ Trong trường hợp implement *DI* thủ công, chúng ta có thể thỏa mã
 
 ### Scope
 
-Giải thích một cách đơn giản, scope trong *Dagger* cho phép chúng ta quản lý vòng đời của dependency bằng cách gắn vòng đời của dependency vào vòng đời của component, tức là khi component "sống" thì dependency "sống" còn khi component "chết" thì dependency cũng được tiễn về miền cực lạc theo. Cơ chế này cũng giúp ta giải quyết vấn đề ở trên khi chỉ một instance duy nhất được provide dù nó được request nhiều lần tại nhiều class khác nhau. Tóm gọn lại là một component thì sẽ chỉ một instance được provide - *singleton* đối với component.
+Giải thích một cách đơn giản, scope trong *Dagger* cho phép chúng ta quản lý vòng đời của dependency bằng cách gắn vòng đời của dependency vào vòng đời của component, tức là khi component còn "sống" thì dependency vẫn sẽ tồn tại còn khi component "chết" thì dependency cũng được đi Tây Trúc lấy kinh theo. Cơ chế này giúp ta giải quyết vấn đề ở trên khi chỉ một instance duy nhất được provide dù nó được request nhiều lần tại nhiều class khác nhau. Tóm lại là một component thì sẽ chỉ một instance được provide - là *singleton* đối với component đó.
 
 Trước khi sử dụng *scope annotation*, chúng ta sẽ thử request 2 dependency xem có bao nhiêu instance được tạo ra:
 ```
@@ -94,13 +94,13 @@ class MainRepositoryImpl @Inject constructor(var apiHelper: ApiHelper,
 }
 ```
 
-Khi run project, chúng ta nhận được kết quả như sau:
+Khi run project, chúng ta nhận được 2 instance khác nhau như sau:
 ```
 2021-04-09 00:01:26.738 2478-2478/io.srinnix.playground I/System.out: io.srinnix.playground.dagger2.automatic.data.DbHelper@4e7f50e
 2021-04-09 00:01:26.739 2478-2478/io.srinnix.playground I/System.out: io.srinnix.playground.dagger2.automatic.data.DbHelper@a41cb2f
 ```
 
-Ngoài ra, code mà *Dagger* gen ra cũng cho ta câu trả lời vì sao có 2 instance được tạo ra:
+Ngoài ra, khi nhìn vào code mà *Dagger* gen ra, chúng ta cũng có thể hiểu tại sao lại có 2 instance được tạo ra:
 ```
 public final class DaggerMainComponent implements MainComponent {
     private DaggerMainComponent() { }
@@ -111,7 +111,10 @@ public final class DaggerMainComponent implements MainComponent {
 }
 ```
 
-Điều đó có nghĩa là, với mỗi lần request dependency, một instance mới tương ứng sẽ được tạo ra. Để giải quyết vấn đề này, chúng ta sẽ sử dụng *scope annotation* để "gắn" vòng đời của `DbHelper` vào `MainComponent`. Trong *Dagger 2*, *scope annotation* duy nhất được định nghĩa trước là `@Singleton`. Chúng ta cần thêm `@Singleton` vào các vị trí sau:
+Với đoạn code phía trên, mỗi lần dependency được request, một instance mới tương ứng sẽ được tạo ra. Lý do cho việc liên tục khởi tạo những instance mới là bởi chúng ta chưa gán cho các dependency một scope nào, hay trạng thái hiện tại của các dependency đang là *unscoped*. Để giải quyết vấn đề này, tức là tái sử dụng lại những dependency đã từng được khởi tạo rồi, chúng ta cần sử dụng *scope annotation* để "gắn" vòng đời của dependency vào một component cụ thể nào đó. Khi đó, dependency sẽ được khởi tạo một lần duy nhất, được quản lý bởi component và được tái provide khi được request.
+
+Trong trường hợp này, chúng ta sẽ gắn `DbHelper` vào `MainComponent` bằng cách sử dụng một *scope annotation* được *Dagger* định nghĩa trước: `@Singleton`. Các vị trí cần thêm *scope annotation* là:
+
 1. Component mà chúng ta muốn sử dụng scope:
 ```
 @Singleton
@@ -167,13 +170,13 @@ abstract class PresenterModule {
 }
 ```
 
-Run project và kiểm tra lại kết quả: Voila!, chỉ có một instance duy nhất được tạo ra.
+Run project và kiểm tra lại kết quả. Voila! Chỉ có một instance duy nhất được tạo ra:
 ```
 2021-03-22 10:48:40.391 11937-11937/? I/System.out: io.srinnix.playground.dagger2.automatic.data.DbHelper@86bb88e
 2021-03-22 10:48:40.391 11937-11937/? I/System.out: io.srinnix.playground.dagger2.automatic.data.DbHelper@86bb88e
 ```
 
-Tiếp tục kiểm tra code mà *Dagger* gen ra:
+Để chắc chắn hơn, chúng ta lại kiểm tra code mà *Dagger* gen ra:
 ```
 public final class DaggerMainComponent implements MainComponent {
     private Provider<DbHelper> dbHelperProvider;
@@ -196,11 +199,13 @@ public final class DaggerMainComponent implements MainComponent {
 }
 ```
 
-Chúng ta thấy rằng `dbHelperProvider` sẽ được khởi tạo một lần duy nhất khi *DaggerMainComponent* được khởi tạo. Và từ sau đó, mỗi khi cần `DbHelper`, `dbHelperProvider.get()` sẽ trả về một `DbHelper` duy nhất.
+Chúng ta thấy rằng `dbHelperProvider` sẽ được khởi tạo một lần duy nhất khi `DaggerMainComponent` được khởi tạo. Và từ sau đó, mỗi khi cần `DbHelper`, `dbHelperProvider.get()` sẽ trả về một instance `DbHelper` duy nhất.
 
-**Note:** Khi sử dụng `@Singleton`, cái tên này dễ làm chúng ta nhớ đến design pattern *Singleton*. Điều này có thể gây hiểu nhầm rằng cứ sử dụng annotation này thì các dependency sẽ "sống" cho đến mãn kiếp của chương trình. Tuy nhiên, cần phải nhấn mạnh rằng, đây chỉ là một cái tên, ý nghĩa của tên không giúp *Dagger* hiểu được vòng đời của dependency là gì. *Dagger* chỉ đơn giản dùng tên scope để quyết định xem: có nên provide một instance duy nhất (component có scope **trùng** với dependency) hay nên tạo ra thêm instance (component có scope **khác** với dependency).
+**Note:**
+- Cái tên *Singleton* dễ làm chúng ta nhớ đến design pattern *Singleton* nên có thể gây hiểu nhầm rằng cứ sử dụng annotation này thì các dependency sẽ "sống" trong toàn bộ vòng đời của chương trình. Tuy nhiên, cần phải sửa lại và nhấn mạnh rằng: đây chỉ là một cái tên, *Dagger* không thể suy ra được vòng đời của dependency dựa vào ý nghĩa của cái tên đó. *Dagger* chỉ đơn giản dùng tên scope để quyết định xem: có nên provide một instance duy nhất (component có scope **trùng** với dependency) hay nên tạo ra thêm instance (component có scope **khác** với dependency).
+- Việc khởi tạo duy nhất 1 instance chỉ có tác dụng khi ta sử dụng chung component. Tức là nếu chúng ta khởi tạo 2 component ở 2 nơi (VD: `LoginActivity` và `MainActivity`), chúng ta vẫn sẽ có 2 bộ dependency khác nhau.
 
-Tuy nhiên, việc chỉ khởi tạo duy nhất 1 instance chỉ có tác dụng khi ta sử dụng chung component. Tức là nếu chúng ta khởi tạo 2 component ở 2 nơi (VD: `LoginActivity` và `MainActivity`), chúng ta vẫn sẽ có 2 bộ dependency khác nhau. Bởi vậy, chúng ta cần khởi tạo và keep component ở một chỗ khác, nơi có vòng đời bao trùm lên các Activity, thì khi dù cho các Activity được tạo ra hoặc chết đi, các dependency mong muốn vẫn sẽ tồn tại độc lập. Với *Android*, một chỗ phù hợp để keep các *global singleton dependency* kiểu này là `Application`. Cùng với việc chuyển đoạn code khai báo và khởi tạo component sang `Application`, chúng ta sẽ đổi tên component thành `ApplicationComponent` để đúng với context hiện tại hơn.
+Với yêu cầu là để  `DbHelper` tồn tại trong suốt chương trình, chúng ta cần khởi tạo và keep component ở một chỗ - nơi có vòng đời bao trùm lên các Activity, thì khi dù cho các Activity được tạo ra hoặc chết đi, các dependency mong muốn vẫn sẽ tồn tại độc lập. Với *Android*, một chỗ phù hợp để keep các *global singleton dependency* kiểu này là `Application`. Cùng với việc chuyển đoạn code khai báo và khởi tạo component sang `Application`, chúng ta sẽ đổi tên component thành `ApplicationComponent` để đúng với context hiện tại hơn.
 ```
 class MyApplication : Application() {
 

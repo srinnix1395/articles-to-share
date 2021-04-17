@@ -6,7 +6,7 @@ Bài viết là phần thứ II của series bài học vỡ lòng về *Dagger 
 
 1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 2. [Android] Dagger 2 - Phần II: Into the Dagger 2
-3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies]()
+3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
 4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
 
 # Trong bài học trước...
@@ -14,6 +14,7 @@ Bài viết là phần thứ II của series bài học vỡ lòng về *Dagger 
 Chúng ta đã nói một chút về việc khởi tạo và quản lý dependency. Tiếp đó, chúng ta ngờ ngợ ra những vấn đề khi ứng dụng được scale up lên. Cuối cùng, chúng ta được giác ngộ với những design principle và design pattern có thể giải quyết giả thiết của bài toán ban đầu.
 
 # Đi vào bài học hôm nay...
+
 Chúng ta sẽ tìm hiểu sâu hơn về *Dagger 2*: trước là lý thuyết và sau là từng bước implement một chương trình đơn giản.
 
 <p align="center">

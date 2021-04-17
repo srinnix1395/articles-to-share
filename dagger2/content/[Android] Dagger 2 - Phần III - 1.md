@@ -14,6 +14,7 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 Chúng ta đã tìm hiểu cách "mô hình hóa" các mối quan hệ giữa class và các dependency thông qua *dependency graph*. Tiếp đó, chúng ta xây dựng một ứng dụng đơn giản và từng bước áp dụng những annotation cơ bản trong *Dagger 2* để khởi tạo các dependency.
 
 # Đi vào bài học hôm nay...
+
 Chương trình ở phần III này sẽ tiếp tục scale up lên với thêm nhiều màn hình và chức năng. Khi đó, chúng ta sẽ phải đối mặt với những vấn đề mới trong việc quản lý vòng đời của các dependency.
 
 <p align="center">
@@ -78,7 +79,7 @@ Trong trường hợp implement *DI* thủ công, chúng ta có thể thỏa mã
 
 ### Scope
 
-Giải thích một cách đơn giản, scope trong *Dagger* cho phép chúng ta quản lý vòng đời của dependency bằng cách gắn vòng đời của dependency vào vòng đời của component, tức là khi component còn "sống" thì dependency vẫn sẽ tồn tại còn khi component "chết" thì dependency cũng được đi Tây Trúc lấy kinh theo. Cơ chế này giúp ta giải quyết vấn đề ở trên khi chỉ một instance duy nhất được provide dù nó được request nhiều lần tại nhiều class khác nhau. Tóm lại là một component thì sẽ chỉ một instance được provide - là *singleton* đối với component đó.
+Giải thích một cách đơn giản, scope trong *Dagger* cho phép chúng ta quản lý vòng đời của dependency bằng cách gắn vòng đời của dependency vào vòng đời của component, tức là khi component còn "sống" thì dependency vẫn sẽ tồn tại còn khi component "chết" thì dependency cũng được tiễn đi Tây Trúc thỉnh kinh theo. Cơ chế này giúp ta giải quyết vấn đề ở trên khi chỉ một instance duy nhất được provide dù nó được request nhiều lần tại nhiều class khác nhau. Tóm lại là một component thì sẽ chỉ một instance được provide - là *singleton* đối với component đó.
 
 Trước khi sử dụng *scope annotation*, chúng ta sẽ thử request 2 dependency xem có bao nhiêu instance được tạo ra:
 ```
@@ -111,7 +112,7 @@ public final class DaggerMainComponent implements MainComponent {
 }
 ```
 
-Với đoạn code phía trên, mỗi lần dependency được request, một instance mới tương ứng sẽ được tạo ra. Lý do cho việc liên tục khởi tạo những instance mới là bởi chúng ta chưa gán cho các dependency một scope nào, hay trạng thái hiện tại của các dependency đang là *unscoped*. Để giải quyết vấn đề này, tức là tái sử dụng lại những dependency đã từng được khởi tạo rồi, chúng ta cần sử dụng *scope annotation* để "gắn" vòng đời của dependency vào một component cụ thể nào đó. Khi đó, dependency sẽ được khởi tạo một lần duy nhất, được quản lý bởi component và được tái provide khi được request.
+Với đoạn code phía trên, mỗi lần dependency được request, một instance mới tương ứng sẽ được tạo ra. Lý do cho việc liên tục khởi tạo những instance mới là bởi chúng ta chưa gán cho các dependency một scope nào, hay trạng thái hiện tại của các dependency đang là *unscoped*. Khi đó, có thể nói dependency đó chưa thuộc về một component duy nhất nào cả nên có thể được truy cập trong toàn bộ chương trình miễn là bạn đã thêm dependency đó vào *dependency graph*. Để giải quyết vấn đề luôn luôn khởi tạo mới instance này và tái sử dụng lại những dependency đã từng được khởi tạo rồi, chúng ta cần sử dụng *scope annotation* để "gắn" vòng đời của dependency vào một component cụ thể nào đó. Khi đó, dependency sẽ được khởi tạo một lần duy nhất, được quản lý bởi component và được tái provide khi được request.
 
 Trong trường hợp này, chúng ta sẽ gắn `DbHelper` vào `MainComponent` bằng cách sử dụng một *scope annotation* được *Dagger* định nghĩa trước: `@Singleton`. Các vị trí cần thêm *scope annotation* là:
 

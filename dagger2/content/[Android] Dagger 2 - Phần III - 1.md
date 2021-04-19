@@ -7,7 +7,8 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
 3. [Android] Dagger 2 - Phần III - 1: The time of our dependencies
-4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---2--The-time-of-our-dependencies)
+5. [[Android] Dagger 2 - Phần IV: A new horizon]()
 
 # Trong bài học trước...
 
@@ -354,6 +355,6 @@ Tương tự như với `UserComponent`, chúng ta phải trả lời 3 câu h�
 - Chúng ta sẽ lưu `ActivityComponent` ở chính các Activity. Lưu ý: Mỗi activity sẽ có một component riêng để với mỗi màn hình, chúng ta cũng sẽ có một bộ dependency riêng.
 - Chúng ta sẽ khởi tạo component ở `onCreate()` và có thể bỏ qua khoản giải phóng vì khi Activity đóng thì component cũng sẽ được giải phóng theo.
 
-### Cùng nhìn lại
+# Cùng nhìn lại
 
 Vậy là khi chương trình "trưởng thành" hơn với những yêu cầu về vòng đời của các dependency phức tạp hơn, chúng ta đã chia nhỏ "god component" ban đầu ra thành các component nhỏ hơn để quản lý các dependency được chính xác hơn. Tuy nhiên, chương trình của chúng ta vẫn chưa thể chạy vì khi đã chia các component ra, chúng ta cần giải quyết thêm vấn đề giao tiếp giữa các component để đến cuối cùng, một *dependency graph* của cả chương trình vẫn được vẽ ra dựa trên sự kết hợp hài hòa của các *dependency graph* nhỏ hơn. Phần tiếp theo của series sẽ hoàn thành bức tranh lớn ấy.

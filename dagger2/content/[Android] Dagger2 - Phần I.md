@@ -12,7 +12,8 @@ Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực t�
 1. [Android] Dagger 2 - Phần I: Basic principles
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
 3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
-4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---2--The-time-of-our-dependencies)
+5. [[Android] Dagger 2 - Phần IV: A new horizon]()
 
 # Kiến thức đầu vào
 
@@ -283,7 +284,7 @@ class Student {
 }
 ```
 
-### Cùng nhìn lại
+# Cùng nhìn lại
 
 Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như *Inversion of Control*, *Dependency inversion* hay những design pattern như *Dependency injection* để giữ cho code của chúng ta mãi ở tuổi 18...
 

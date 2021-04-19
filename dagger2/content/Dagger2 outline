@@ -30,12 +30,6 @@
 
 4. Part III - 2: The time of our dependencies
 - Dependency component vs sub-component
-- Optional:
-  + Global singleton and Local singleton
-  + Singleton has implicit dependency
-  + Singleton creation
-    . file Module
-    . file Component
 
 5. Part IV - A new horizon
 - Parts which series haven't covered
@@ -43,7 +37,7 @@
 
 6. Part V - Hilt migration guide.
 - annotation cheat sheet
-- 
+-
 
 #Reference
 - IOC, DIP, DI: https://www.tutorialsteacher.com/ioc/introduction

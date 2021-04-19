@@ -7,7 +7,8 @@ Bài viết là phần thứ II của series bài học vỡ lòng về *Dagger 
 1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
 2. [Android] Dagger 2 - Phần II: Into the Dagger 2
 3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
-4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies]()
+4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---2--The-time-of-our-dependencies)
+5. [[Android] Dagger 2 - Phần IV: A new horizon]()
 
 # Trong bài học trước...
 
@@ -433,7 +434,7 @@ mainComponent.inject(this)
 - Với Activity, inject Dagger bên trong method `onCreate()` nhưng trước khi gọi `super.onCreate()`.
 - Với Fragment, inject Dagger bên trong method `onAttach()` nhưng sau khi gọi `super.onAttach()`.
 
-### Cùng nhìn lại
+# Cùng nhìn lại
 
 Cuối cùng, sau khi đã hoàn thành việc khai báo các dependency không mấy khó khăn, phần việc nhàm chán còn lại là khởi tạo và quản lý các dependency, *Dagger* sẽ lo hết cho chúng ta. Diagram dưới đây sẽ thể hiển mối quan hệ giữa các thành phần trong *Dagger*:
 

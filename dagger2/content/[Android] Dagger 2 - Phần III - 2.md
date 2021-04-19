@@ -8,6 +8,7 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
 3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
 4. [Android] Dagger 2 - Phần III - 2: The time of our dependencies
+5. [[Android] Dagger 2 - Phần IV: A new horizon]()
 
 # Trong bài học trước...
 
@@ -47,8 +48,6 @@ Những đặc điểm của kiểu implement này là:
 Với chương trình đang xét, chúng ta có một số phân tích như sau:
 - Chúng ta thấy `UserComponent` sẽ provide `MainRepository` và `MainRepository` lại cần `ApiHelper` được provide bởi `ApplicationComponent`. Bởi vậy, `UserComponent` cần phụ thuộc vào `ApplicationComponent`
 - Tương tự với phân tích ở trên, `ActivityComponent` cũng cần phụ thuộc vào `ApplicationComponent`.
-
-TODO: Diagram nếu rảnh
 
 Sau khi đã phân tích, chúng ta sẽ bắt tay vào implement *component dependency*. Các bước để implement là:
 1. Chúng ta cần khai báo ở các dependency phụ thuộc rằng dependency cần phụ thuộc là gì bằng cách khai báo ở phía sau annotation `@Component`
@@ -104,17 +103,33 @@ Tương tự như bước phân tích với *component dependency*, chúng ta s�
 - `ActivityComponent` sẽ là subcomponent của `ApplicationComponent`
 
 Các bước để implement subcomponent là:
-1. Sử dụng annotation `@Subcomponent` để khai báo các component con thay vì `@Component`
+1. Sử dụng annotation `@Subcomponent` để khai báo các component con thay vì `@Component`. Ngoài ra, chúng ta cần khai báo thêm một interface Factory để khởi tạo subcomponent
 ```
 @Subcomponent(modules = [UserModule::class, PresenterUserModule::class, RepositoryUserModule::class])
 @LoggedUserScope
-interface UserComponent { ... }
+interface UserComponent {
+
+      @Subcomponent.Factory
+      interface Factory {
+
+          fun create() : UserComponent
+      }
+}
 ```
 ```
 @Subcomponent(modules = [PresenterModule::class, RepositoryModule::class])
 @ActivityScope
-interface ActivityComponent { ... }
+interface ActivityComponent {
+
+      @Subcomponent.Factory
+      interface Factory {
+
+          fun create() : ActivityComponent
+      }
+}
 ```
+
+    **Note:** Subcomponent Factory phải có một function trả về component và chúng ta sẽ sử dụng function đó để khởi tạo component. Ngoài ra, để truyền một dependency mà không thể được khởi tạo bên trong *dependency graph*, chúng ta có thể sử dụng `@BindInstance`. Xem thêm ở [Dagger 2 - Phần IV]()
 
 2. Khai báo thêm một module cho component cha và list ra tất cả những subcomponent mà nó có bên trong module vừa định nghĩa.
 ```
@@ -123,12 +138,36 @@ class ApplicationSubComponent
 ```
 ```
 @Singleton
-@Component(modules = [ApplicationSubComponent::class,...])
+@Component(modules = [ApplicationSubComponent::class, ...])
 interface ApplicationComponent { ... }
 ```
 
-3. Khai báo các function không tham số ở component cha để include subcomponent vào
+3. Khai báo một function không tham số ở component cha và trả về kiểu Factory của subcomponent. Chúng ta sẽ sử dụng function này để có thể truy cập và khởi tạo subcomponent từ bên ngoài.
+```
+@Singleton
+@Component(modules = [ApplicationSubComponent::class, UtilsModule::class, ApiModule::class])
+interface ApplicationComponent {
 
+      fun userComponentFactory(): UserComponent.Factory
+
+      fun activityComponentFactory(): ActivityComponent.Factory
+}
 ```
 
+4. Khởi tạo subcomponent
 ```
+val userComponent = (context as MyApplication).applicationComponent
+            .userComponentFactory()
+            .create()
+```
+```
+val activityComponent = (application as MyApplication).applicationComponent
+            .activityComponentFactory()
+            .create()
+```
+
+    **Note:** Chúng ta có thể nhận ra một sự khác nhau ở đây giữa *subcomponent* và *component dependency* khi *Dagger* không gen cho chúng ta các class implement component như *DaggerUserComponent* hay *DaggerActivityComponent* trong trường hợp sử dụng kiểu implement *subcomponent*. Đó là bởi vì thực chất các subcomponent vẫn là một phần của component cha thay vì tách ra hẳn thành một component riêng biệt như đối với *component dependency*
+    
+# Cùng nhìn lại
+
+Vậy là với *scope*, *component dependency* và *subcomponent*, chúng ta đã có đủ các công cụ để fulfill được các yêu cầu về sự khác nhau trong vòng đời của các dependency. Từ đó, chương trình của chúng ta cũng sẽ được module hóa rõ ràng hơn và clean hơn. Và đến được đây, khi nhìn vào những đoạn code được *Dagger* gen, những sự dễ dàng trong việc thay đổi dependency khi việc thay đổi ở phía trên là cực kỳ ít, chúng ta cũng đã có thể mường tược được về những gì *Dagger* đã làm và sẽ làm cho chúng ta khi những chương trình trong thực tế lớn hơn nhiều so với ví dụ đã xét.

@@ -13,7 +13,7 @@ Mình biết đến *Dagger* (chính xác là *Dagger 2*) khi còn đi thực t�
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
 3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
 4. [[Android] Dagger 2 - Phần III - 2: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---2--The-time-of-our-dependencies)
-5. [[Android] Dagger 2 - Phần IV: A new horizon]()
+5. [[Android] Dagger 2 - Phần IV: A new horizon](https://kipalog.com/posts/Android--Dagger-2---Phan-IV--A-new-horizon)
 
 # Kiến thức đầu vào
 

@@ -21,6 +21,6 @@ Note: If you're already familiar with Dagger, check out these best practices. If
     You should only declare modules once in a component.
     Name the scope annotations depending on the lifetime where the annotation is used. Examples include @ApplicationScope, @LoggedUserScope, and @ActivityScope.
 
-    368.454.985
-    23.230.185
-    24.230.836
+    368454985
+    23230185
+    24230836

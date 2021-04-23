@@ -8,7 +8,7 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
 3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
 4. [Android] Dagger 2 - Phần III - 2: The time of our dependencies
-5. [[Android] Dagger 2 - Phần IV: A new horizon]()
+5. [[Android] Dagger 2 - Phần IV: A new horizon](https://kipalog.com/posts/Android--Dagger-2---Phan-IV--A-new-horizon)
 
 # Trong bài học trước...
 
@@ -167,7 +167,7 @@ val activityComponent = (application as MyApplication).applicationComponent
 ```
 
     **Note:** Chúng ta có thể nhận ra một sự khác nhau ở đây giữa *subcomponent* và *component dependency* khi *Dagger* không gen cho chúng ta các class implement component như *DaggerUserComponent* hay *DaggerActivityComponent* trong trường hợp sử dụng kiểu implement *subcomponent*. Đó là bởi vì thực chất các subcomponent vẫn là một phần của component cha thay vì tách ra hẳn thành một component riêng biệt như đối với *component dependency*
-    
+
 # Cùng nhìn lại
 
 Vậy là với *scope*, *component dependency* và *subcomponent*, chúng ta đã có đủ các công cụ để fulfill được các yêu cầu về sự khác nhau trong vòng đời của các dependency. Từ đó, chương trình của chúng ta cũng sẽ được module hóa rõ ràng hơn và clean hơn. Và đến được đây, khi nhìn vào những đoạn code được *Dagger* gen, những sự dễ dàng trong việc thay đổi dependency khi việc thay đổi ở phía trên là cực kỳ ít, chúng ta cũng đã có thể mường tược được về những gì *Dagger* đã làm và sẽ làm cho chúng ta khi những chương trình trong thực tế lớn hơn nhiều so với ví dụ đã xét.
